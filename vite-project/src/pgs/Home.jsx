@@ -52,10 +52,10 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-[80vw] mt-4">
       {/* Hero Section */}
-      <div className="relative h-screen max-h-[700px] overflow-hidden rounded-2xl">
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-600/90 to-teal-800/90 z-10" />
+      <div className="relative h-screen max-h-[60vh] overflow-hidden rounded-2xl">
+        <div className="absolute inset-0 bg-gradient-to-r from-teal-600/60 to-teal-800/90 z-10" />
         <Image
           src="/hero-skin-health.jpeg"
           alt="Skin health"

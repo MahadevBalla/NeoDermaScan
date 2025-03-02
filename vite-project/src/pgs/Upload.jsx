@@ -12,7 +12,6 @@ import {
   Image, 
   Card,
   Stepper,
-  rem,
   Loader,
   Badge
 } from '@mantine/core';

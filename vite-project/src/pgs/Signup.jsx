@@ -9,10 +9,8 @@ import {
   Checkbox, 
   Group, 
   Divider, 
-  Paper,
   Image,
   Anchor,
-  Box
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { 
@@ -25,7 +23,7 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Signup = () => {
+const Signup = ({ onSignupSuccess }) => {
   const navigate = useNavigate();
 
   const form = useForm({
@@ -48,8 +46,20 @@ const Signup = () => {
 
   const handleSubmit = (values) => {
     console.log('Signup values:', values);
-    // Handle signup logic here (e.g., API call)
-    navigate('/dashboard'); // Redirect after successful signup
+    
+    // Here you would handle signup with your backend
+    // For now we'll simulate successful registration
+    localStorage.setItem('authToken', 'example-auth-token');
+    localStorage.setItem('userName', values.name);
+    localStorage.setItem('userEmail', values.email);
+    
+    // Call the onSignupSuccess prop passed from App component
+    if (onSignupSuccess) {
+      onSignupSuccess();
+    } else {
+      // Fallback navigation if prop not provided
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -195,7 +205,7 @@ const Signup = () => {
                 className="mb-4 !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-900/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
     active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
               >
-                Sign In
+                Create Account
               </Button>
               
               <Divider

@@ -9,10 +9,8 @@ import {
   Checkbox,
   Group,
   Divider,
-  Paper,
   Image,
   Anchor,
-  Box
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
@@ -23,7 +21,7 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
 
   const form = useForm({
@@ -40,8 +38,24 @@ const Login = () => {
 
   const handleSubmit = (values) => {
     console.log('Login values:', values);
-    // Here you would handle authentication
-    navigate('/dashboard');
+    
+    // Here you would handle authentication with your backend
+    // For now we'll simulate successful authentication
+    localStorage.setItem('authToken', 'example-auth-token');
+    localStorage.setItem('userEmail', values.email);
+    
+    // If "Remember me" is checked, set a longer expiry
+    if (values.rememberMe) {
+      localStorage.setItem('rememberMe', 'true');
+    }
+    
+    // Call the onLoginSuccess prop passed from App component
+    if (onLoginSuccess) {
+      onLoginSuccess();
+    } else {
+      // Fallback navigation if prop not provided
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -166,7 +180,7 @@ const Login = () => {
                 size="md"
                 radius="md"
                 fullWidth
-                className="bg-teal-600 hover:bg-teal-700 mb-4 !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-900/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+                className="mb-4 !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-900/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
     active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
               >
                 Sign In

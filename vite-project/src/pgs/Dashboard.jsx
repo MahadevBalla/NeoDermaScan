@@ -14,7 +14,6 @@ import {
   Tabs,
   ActionIcon,
   Avatar,
-  Menu,
   Grid,
   RingProgress
 } from '@mantine/core';
@@ -109,7 +108,7 @@ const Dashboard = () => {
       value: "1",
       description: "Requiring attention",
       icon: IconAlertTriangle,
-      color: "coral"
+      color: "red"
     },
     {
       title: "Follow-ups",
@@ -212,7 +211,7 @@ const Dashboard = () => {
             component={Link}
             to="/upload"
             rightSection={<IconUpload size={16} />}
-            className="bg-coral-500 hover:bg-coral-600"
+            className="bg-red-500 hover:bg-red-600"
           >
             New Analysis
           </Button>

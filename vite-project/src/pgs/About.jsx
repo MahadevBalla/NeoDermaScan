@@ -13,7 +13,6 @@ import {
   Timeline,
   Image,
   Button,
-  rem
 } from '@mantine/core';
 import {
   IconMicroscope,
@@ -105,11 +104,11 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen mt-4">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-teal-600 to-teal-800 text-white py-24 rounded-2xl mx-2">
+      <div className="bg-gradient-to-r from-teal-600 to-teal-800 text-white py-24 rounded-2xl mx-2 px-4">
         <Container size="lg">
-          <div className="max-w-3xl">
+          <div className="max-w-3xl flex-col justify-center">
             <Title className="text-4xl md:text-5xl font-bold mb-6">
               Our Mission: Early Detection Saves Lives
             </Title>
