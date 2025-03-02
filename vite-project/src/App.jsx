@@ -14,7 +14,7 @@ function App() {
       <Router>
         <nav className="fixed top-0 w-full bg-gray-100 shadow-md flex justify-center gap-6 py-4 z-50">
           <Link to="/">
-            <Button variant="subtle">Home</Button>
+            <Button color='teal' variant="subtle">Home</Button>
           </Link>
           <Link to="/about">
             <Button variant="subtle">About</Button>

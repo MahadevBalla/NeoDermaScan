@@ -54,7 +54,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="relative h-screen max-h-[700px] overflow-hidden rounded">
+      <div className="relative h-screen max-h-[700px] overflow-hidden rounded-2xl">
         <div className="absolute inset-0 bg-gradient-to-r from-teal-600/90 to-teal-800/90 z-10" />
         <Image
           src="/hero-skin-health.jpeg"
@@ -63,35 +63,35 @@ const Home = () => {
           fallbackSrc="https://via.placeholder.com/1200x700/teal/ffffff?text=SkinHealth"
         />
         <Container size="lg" className="relative z-20 h-full">
-          <div className="flex flex-col justify-center h-full pt-16 pb-20 gap-y-4">
-            <Title className="text-white text-4xl md:text-6xl font-bold max-w-2xl leading-tight mb-6">
+          <div className="flex flex-col justify-center h-full pt-16 pb-20 gap-y-6">
+            <Title className="text-white text-4xl md:text-6xl font-bold text-center w-full leading-tight mb-6">
               Advanced Skin Disease Detection Powered by AI
             </Title>
-            <Text className="text-white/90 text-xl max-w-xl mb-10 ">
+            <Text className="text-white/90 text-xl text-center w-full mb-10 ">
               Get accurate skin analysis in seconds. Upload a photo and our AI
               will help identify potential skin conditions with medical-grade
               precision.
             </Text>
-            <Group className="">
+            <Group className="w-full flex flex-row !justify-center center">
               <Button
                 component={Link}
                 to="/upload"
                 size="lg"
                 radius="md"
                 className="
-    !bg-gradient-to-r !from-coral-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-coral-500/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-coral-500 
-    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-coral-500 focus:!ring-offset-2"
+    !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-500/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
               >
                 Analyze Your Skin Now
               </Button>
               <Button
-                color="orange"
+                color="white"
                 component={Link}
                 to="/about"
                 variant="outline"
                 size="lg"
                 radius="md"
-                className="!text-teal-500 !border-teal-500 hover:!bg-teal-500 hover:!text-white transform hover:!scale-105 transition-all duration-300 !shadow-md"
+                className="!text-white-500 !border-white-500 hover:!border-red-500 hover:!bg-red-500 hover:!text-white transform hover:!scale-103 transition-all duration-300 !shadow-md"
               >
                 Learn More
               </Button>
@@ -110,7 +110,7 @@ const Home = () => {
           providing peace of mind and encouraging timely medical consultations.
         </Text>
 
-        <SimpleGrid className="mt-2" cols={{ base: 1, sm: 2, md: 4 }} spacing="xl">
+        <SimpleGrid className="mt-4" cols={{ base: 1, sm: 2, md: 4 }} spacing="xl">
           {features.map((feature) => (
             <Paper
               key={feature.title}
@@ -123,7 +123,8 @@ const Home = () => {
                 color="teal"
                 size={70}
                 radius="md"
-                className=" mb-4"
+                className=" mb-4 !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
               >
                 <feature.icon size={30} stroke={1.5} />
               </ThemeIcon>
@@ -149,7 +150,7 @@ const Home = () => {
             powered by our advanced AI algorithms.
           </Text>
 
-          <SimpleGrid className="mt-2" cols={{ base: 1, md: 3 }} spacing="xl">
+          <SimpleGrid className="mt-4" cols={{ base: 1, md: 3 }} spacing="xl">
             {[
               {
                 title: "Upload a Photo",
@@ -211,7 +212,8 @@ const Home = () => {
               size="lg"
               radius="md"
               rightSection={<IconArrowRight size={18} />}
-              className="bg-coral-500 hover:bg-coral-600 text-white"
+              className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-500/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
             >
               Try It Now
             </Button>
@@ -236,18 +238,19 @@ const Home = () => {
               <Title order={2} className="text-teal-800 text-center mb-4">
                 Take Control of Your Skin Health Today
               </Title>
-              <Text className="text-gray-600 text-center max-w-lg mx-auto mb-8">
+              <Text className="mt-2 text-gray-600 text-center w-full mx-auto mb-8">
                 Join thousands of users who have gained peace of mind through
                 early detection and professional guidance for their skin
                 concerns.
               </Text>
-              <Group justify="center" gap="md">
+              <Group justify="center" gap="md" className="mt-4">
                 <Button
                   component={Link}
                   to="/signup"
                   size="lg"
                   radius="md"
-                  className="bg-coral-500 hover:bg-coral-600 text-white"
+                  className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-500/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
                 >
                   Create Free Account
                 </Button>
@@ -257,7 +260,8 @@ const Home = () => {
                   variant="outline"
                   size="lg"
                   radius="md"
-                  className="text-teal-700 border-teal-300 hover:bg-teal-50"
+                  color="red"
+                  className="!text-white-500 !border-white-500 hover:!border-red-500 hover:!bg-red-500 hover:!text-white transform hover:!scale-103 transition-all duration-300 !shadow-md"
                 >
                   Try Without Account
                 </Button>

@@ -181,7 +181,8 @@ const Upload = () => {
                         <ThemeIcon
                           size={36}
                           radius="md"
-                          className="bg-teal-100 text-teal-700"
+                          className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
                         >
                           <IconInfoCircle size={20} />
                         </ThemeIcon>
@@ -235,14 +236,16 @@ const Upload = () => {
                           <Button
                             onClick={handleReset}
                             variant="outline"
-                            className="border-gray-300 text-gray-700"
+                            color='red'
+                            className="border-gray-300 text-gray-700  hover:!border-red-500 hover:!bg-red-500 hover:!text-white transform hover:!scale-103 transition-all duration-300 !shadow-md"
                           >
                             Choose Different Image
                           </Button>
                           <Button
                             onClick={handleAnalyze}
                             size="md"
-                            className="bg-coral-500 hover:bg-coral-600"
+                            className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
                             rightSection={analyzing ? <Loader size="xs" color="white" /> : null}
                             disabled={analyzing}
                           >
@@ -292,14 +295,14 @@ const Upload = () => {
                                 {item.condition}
                               </Text>
                               <Group gap="xs">
-                                <Text size="sm" fw={500} className={index === 0 ? "text-coral-600" : "text-gray-600"}>
+                                <Text size="sm" fw={500} className={index === 0 ? "text-red-600" : "text-gray-600"}>
                                   {item.probability.toFixed(1)}%
                                 </Text>
                                 <Progress 
                                   value={item.probability} 
                                   size="sm" 
                                   w={80} 
-                                  color={index === 0 ? "coral" : "blue"} 
+                                  color={index === 0 ? "red" : "blue"} 
                                 />
                               </Group>
                             </Group>
@@ -329,7 +332,8 @@ const Upload = () => {
                             <ThemeIcon 
                               size={40} 
                               radius="md" 
-                              className="bg-red-100 text-red-700"
+                              className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
                             >
                               <IconAlertCircle size={24} />
                             </ThemeIcon>
@@ -347,7 +351,7 @@ const Upload = () => {
                         <Title order={4} className="text-teal-800 mb-3">
                           Recommendations
                         </Title>
-                        <ul className="list-disc pl-5 mb-6 text-gray-700 space-y-2">
+                        <ul className="list-disc pl-5 mb-6 text-gray-700 space-y-2 mt-2">
                           {results.recommendations.map((rec, index) => (
                             <li key={index}>{rec}</li>
                           ))}
@@ -360,18 +364,20 @@ const Upload = () => {
                           This analysis is not a medical diagnosis. Please consult with a dermatologist for proper evaluation and treatment options.
                         </Text>
                         
-                        <Group mt={6}>
+                        <Group className='mb-4' mt={6}>
                           <Button
                             onClick={handleReset}
                             variant="outline"
-                            className="border-gray-300 text-gray-700"
+                            color='red'
+                            className="border-gray-300 text-gray-700 mt-2 hover:!border-red-500 hover:!bg-red-500 hover:!text-white transform hover:!scale-103 transition-all duration-300 !shadow-md"
                           >
                             Upload New Image
                           </Button>
                           <Button
                             component={Link}
                             to="/find-doctor"
-                            className="bg-coral-500 hover:bg-coral-600"
+                            className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2 mt-2"
                             rightSection={<IconArrowRight size={18} />}
                           >
                             Find a Dermatologist

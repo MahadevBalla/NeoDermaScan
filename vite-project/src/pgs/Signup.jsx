@@ -53,13 +53,13 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-20">
-      <Container size="sm">
-        <Paper
-          radius="lg"
+    <div className="min-h-screen bg-gray-50 py-20 w-full">
+      <Container size="lg">
+        <div
+          style={{ width: '100%' }}
           withBorder
           p={0}
-          className="overflow-hidden shadow-xl border-teal-100 flex flex-col md:flex-row"
+          className="overflow-hidden shadow-xl border-teal-100 flex flex-col md:flex-row rounded-2xl"
         >
           {/* Left side (image) - hidden on mobile */}
           <div className="hidden md:block w-2/5 relative">
@@ -192,9 +192,10 @@ const Signup = () => {
                 size="md"
                 radius="md"
                 fullWidth
-                className="bg-teal-600 hover:bg-teal-700 mb-4"
+                className="mb-4 !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-900/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
               >
-                Sign Up
+                Sign In
               </Button>
               
               <Divider
@@ -225,14 +226,14 @@ const Signup = () => {
                 <Anchor 
                   component={Link} 
                   to="/login" 
-                  className="font-medium text-coral-500 hover:text-coral-600"
+                  className="font-medium text-red-500 hover:text-red-600"
                 >
                   Log in
                 </Anchor>
               </Text>
             </form>
           </div>
-        </Paper>
+        </div>
       </Container>
     </div>
   );

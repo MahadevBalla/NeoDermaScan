@@ -107,21 +107,22 @@ const About = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-teal-600 to-teal-800 text-white py-24">
+      <div className="bg-gradient-to-r from-teal-600 to-teal-800 text-white py-24 rounded-2xl mx-2">
         <Container size="lg">
           <div className="max-w-3xl">
             <Title className="text-4xl md:text-5xl font-bold mb-6">
               Our Mission: Early Detection Saves Lives
             </Title>
-            <Text className="text-xl text-white/90 mb-8 leading-relaxed">
+            <Text className="text-xl text-white/90 mb-8 leading-relaxed my-2">
               We're leveraging artificial intelligence to make professional-quality skin analysis accessible to everyone, anywhere. By detecting potential issues early, we help people take control of their skin health and seek appropriate care when needed.
             </Text>
             <Group className='mt-2'>
               <ThemeIcon
-                color='white'
+                color='orange'
                 size={60}
                 radius="md"
-                className="bg-white/20 backdrop-blur-sm"
+                className="bg-white/20 backdrop-blur-sm !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2 my-2"
               >
                 <IconCertificate size={30} className="text-white" />
               </ThemeIcon>
@@ -151,7 +152,7 @@ const About = () => {
               Today, our technology has analyzed over 500,000 skin images and helped countless users identify potential skin conditions early, when treatment is most effective.
             </Text>
 
-            <Timeline className='mt-4' color="cyan" radius="md" active={3} bulletSize={28} lineWidth={3}>
+            <Timeline className='mt-4' color="orange" radius="md" active={3} bulletSize={28} lineWidth={3}>
               <Timeline.Item bullet={<IconCalendarStats size={12} />} title="2022">
                 <Text size="sm" className="text-gray-600">
                   Company founded, initial AI research begins
@@ -197,11 +198,11 @@ const About = () => {
           <Title order={2} className="text-teal-800 text-center mb-4">
             Our Values
           </Title>
-          <Text className="text-gray-600 text-center max-w-2xl mx-auto mb-16">
+          <Text className="text-gray-600 text-center w-full mx-auto mb-16">
             These core principles guide everything we do, from how we develop our technology to how we interact with users.
           </Text>
 
-          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl">
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl" className='mt-4'>
             {values.map((value) => (
               <Paper
                 key={value.title}
@@ -211,9 +212,11 @@ const About = () => {
                 className="hover:shadow-lg transition-shadow border-teal-50 flex"
               >
                 <ThemeIcon
+                  color='orange'
                   size={60}
                   radius="md"
-                  className="bg-teal-100 text-teal-700 mr-4 flex-shrink-0"
+                  className="mb-4 !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2 bg-teal-100 text-teal-700 mr-4 flex-shrink-0"
                 >
                   <value.icon size={26} stroke={1.5} />
                 </ThemeIcon>
@@ -236,11 +239,11 @@ const About = () => {
         <Title order={2} className="text-teal-800 text-center mb-4">
           Meet Our Team
         </Title>
-        <Text className="text-gray-600 text-center max-w-2xl mx-auto mb-16">
+        <Text className="text-gray-600 text-center w-full mx-auto mb-16">
           Our multidisciplinary team brings together expertise in dermatology, artificial intelligence, and healthcare technology.
         </Text>
 
-        <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="xl">
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="xl" className='mt-4'>
           {team.map((member) => (
             <Paper
               key={member.name}
@@ -267,7 +270,7 @@ const About = () => {
               <Text className="text-lavender-700 mb-3 font-medium">
                 {member.title}
               </Text>
-              <Text className="text-gray-600 leading-relaxed">
+              <Text className="text-gray-600 leading-relaxed mt-4">
                 {member.bio}
               </Text>
             </Paper>
@@ -281,16 +284,16 @@ const About = () => {
           <Title order={2} className="text-teal-800 text-center mb-4">
             Frequently Asked Questions
           </Title>
-          <Text className="text-gray-600 text-center max-w-2xl mx-auto mb-16">
+          <Text className="text-gray-600 text-center w-full mx-auto mb-16">
             Find answers to common questions about our platform, technology, and services.
           </Text>
 
           <Paper
             withBorder
             radius="md"
-            className="border-teal-100 max-w-3xl mx-auto"
+            className="border-teal-100 max-w-3xl mx-auto mt-4"
           >
-            <Accordion variant="separated">
+            <Accordion variant="contained">
               {faqs.map((faq, index) => (
                 <Accordion.Item key={index} value={`faq-${index}`}>
                   <Accordion.Control>
@@ -316,9 +319,10 @@ const About = () => {
               component={Link}
               to="/contact"
               variant="outline"
+              color='red'
               size="md"
               radius="md"
-              className="text-teal-700 border-teal-300 hover:bg-teal-50"
+              className="mt-4 !text-white-500 !border-white-500 hover:!border-red-500 hover:!bg-red-500 hover:!text-white transform hover:!scale-103 transition-all duration-300 !shadow-md"
             >
               Contact Us
             </Button>
