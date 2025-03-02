@@ -38,21 +38,21 @@ const About = () => {
     {
       name: "Paarth Maha Dih",
       title: "Lead AI Engineer",
-      image: "/team-david.jpg",
+      image: "/team-paarth2.jpg",
       fallback: "https://via.placeholder.com/200/teal/ffffff?text=MR",
       bio: "ML specialist with background in computer vision and medical imaging analysis from Stanford University."
     },
     {
       name: "Dr. Mahadev Balla",
       title: "Research Director",
-      image: "/team-david.jpg",
+      image: "/team-mahadev.jpg",
       fallback: "https://via.placeholder.com/200/teal/ffffff?text=AP",
       bio: "PhD in Medical Informatics with extensive research on machine learning applications in dermatological diagnostics."
     },
     {
       name: "Vedaant Mahale",
       title: "Product Director",
-      image: "/team-david.jpg",
+      image: "/team-vedaant2.jpg",
       fallback: "https://via.placeholder.com/200/teal/ffffff?text=DK",
       bio: "Former healthcare product lead with experience designing intuitive medical technology interfaces."
     },
