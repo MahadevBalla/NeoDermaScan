@@ -93,7 +93,10 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
 
   return (
     <nav className="fixed top-0 w-full bg-gray-100 shadow-md py-4 px-6 z-50 flex justify-between items-center">
-      <div className="text-xl font-bold text-teal-600">NeoDermaScan</div>
+      <div className='flex flex-row items-center text-center gap-1'>
+        <div><img src="/logo-white.png" alt="" className='h-8 w-8' /></div>
+        <div className="text-xl font-bold text-teal-600">NeoDermaScan</div>
+      </div>
 
       {/* Desktop Navigation */}
       {desktopNav}

@@ -20,6 +20,7 @@ import {
   IconAt
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { auth, googleProvider, signInWithPopup } from "../firebaseConfig";
 
 const Login = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
@@ -38,23 +39,32 @@ const Login = ({ onLoginSuccess }) => {
 
   const handleSubmit = (values) => {
     console.log('Login values:', values);
-    
+
     // Here you would handle authentication with your backend
     // For now we'll simulate successful authentication
     localStorage.setItem('authToken', 'example-auth-token');
     localStorage.setItem('userEmail', values.email);
-    
+
     // If "Remember me" is checked, set a longer expiry
     if (values.rememberMe) {
       localStorage.setItem('rememberMe', 'true');
     }
-    
+
     // Call the onLoginSuccess prop passed from App component
     if (onLoginSuccess) {
       onLoginSuccess();
     } else {
       // Fallback navigation if prop not provided
       navigate('/dashboard');
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("User:", result.user);
+    } catch (error) {
+      console.error("Google Sign-In Error:", error.message);
     }
   };
 
@@ -68,55 +78,7 @@ const Login = ({ onLoginSuccess }) => {
           p={0}
           className="overflow-hidden shadow-xl border-teal-100 flex flex-col md:flex-row rounded-2xl"
         >
-          {/* Left side (image) - hidden on mobile */}
-          <div className="hidden md:block w-2/5 relative rounded-bl-2xl">
-            <div className="absolute inset-0 bg-gradient-to-b from-teal-600/90 to-teal-800/90 z-10" />
-            <Image
-              src="/login-side-image.jpg"
-              alt="Skin health"
-              className="absolute inset-0 w-full h-full object-cover"
-              fallbackSrc="https://via.placeholder.com/600x900/teal/ffffff?text=SkinHealth"
-            />
-            <div className="absolute inset-0 z-20 flex flex-col justify-center p-8">
-              <div className="mb-auto">
-                <img
-                  src="/logo-white.png"
-                  alt="Logo"
-                  className="h-10 mb-6"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://via.placeholder.com/150x40/teal/ffffff?text=SkinAI";
-                  }}
-                />
-              </div>
-              <div className="mb-8">
-                <Title order={2} className="text-white mb-4">
-                  Welcome Back
-                </Title>
-                <Text className="text-white/80">
-                  Access your account to check your skin analysis history and get personalized recommendations.
-                </Text>
-              </div>
-              <div className="mt-auto">
-                <Text size="xs" className="text-white/60">
-                  "This platform has completely changed how I monitor my skin health."
-                </Text>
-                <Group align="center" mt="xs">
-                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm" />
-                  <div>
-                    <Text size="sm" className="text-white">
-                      Jessica M.
-                    </Text>
-                    <Text size="xs" className="text-white/70">
-                      Platform User
-                    </Text>
-                  </div>
-                </Group>
-              </div>
-            </div>
-          </div>
-
-          {/* Right side (form) */}
+          {/* Left side (form) */}
           <div className="w-full md:w-3/5 p-8 md:p-12 bg-white">
             <div className="md:hidden mb-8">
               <img
@@ -197,6 +159,7 @@ const Login = ({ onLoginSuccess }) => {
                   leftSection={<IconBrandGoogle size={16} />}
                   variant="outline"
                   className="border-gray-300 text-gray-700"
+                  onClick={handleGoogleSignIn}
                 >
                   Google
                 </Button>
@@ -220,6 +183,54 @@ const Login = ({ onLoginSuccess }) => {
                 </Anchor>
               </Text>
             </form>
+          </div>
+
+          {/* Right side (image) - hidden on mobile */}
+          <div className="hidden md:block w-2/5 relative rounded-bl-2xl">
+            <div className="absolute inset-0 bg-gradient-to-b from-teal-600/90 to-teal-800/90 z-10" />
+            <Image
+              src="/login-side-image.jpg"
+              alt="Skin health"
+              className="absolute inset-0 w-full h-full object-cover"
+              fallbackSrc="https://via.placeholder.com/600x900/teal/ffffff?text=SkinHealth"
+            />
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-8">
+              <div className="mb-auto">
+                <img
+                  src="/logo-white.png"
+                  alt="Logo"
+                  className="w-[225px] h-[200px]"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150x40/teal/ffffff?text=SkinAI";
+                  }}
+                />
+              </div>
+              <div className="mb-8 text-center">
+                <Title order={2} className="!text-white">
+                  Welcome Back
+                </Title>
+                <Text className="!text-white/80">
+                  Access your account to check your skin analysis history and get personalized recommendations.
+                </Text>
+              </div>
+              <div className="mt-auto text-center">
+                <Text size="xs" className="!text-white/60">
+                  "This platform has completely changed how I monitor my skin health."
+                </Text>
+                <Group align="center" mt="xs" className='text-white'>
+                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm" />
+                  <div>
+                    <Text size="sm" className="">
+                      Jessica M.
+                    </Text>
+                    <Text size="xs" className="!text-white/70">
+                      Platform User
+                    </Text>
+                  </div>
+                </Group>
+              </div>
+            </div>
           </div>
         </div>
       </Container>

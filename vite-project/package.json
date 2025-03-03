@@ -20,6 +20,7 @@
     "@mantine/spotlight": "^7.17.1",
     "@tabler/icons-react": "^3.30.0",
     "@tailwindcss/vite": "^4.0.9",
+    "firebase": "^11.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.2.0",

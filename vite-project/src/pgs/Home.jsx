@@ -140,7 +140,7 @@ const Home = () => {
       </Container>
 
       {/* How It Works Section */}
-      <div className="bg-gray-50 py-20">
+      <div className="bg-gray-50 pb-20">
         <Container size="lg">
           <Title order={2} className="text-teal-800 text-center mb-4">
             How It Works
@@ -222,7 +222,7 @@ const Home = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="relative py-16 overflow-hidden">
+      <div className="relative pb-20 overflow-hidden">
         <div className="absolute inset-0 bg-lavender-500/10" />
         <Container size="md" className="relative">
           <Paper
