@@ -74,7 +74,6 @@ const Login = ({ onLoginSuccess }) => {
         <div
           style={{ width: '100%' }}
           radius="lg"
-          withBorder
           p={0}
           className="overflow-hidden shadow-xl border-teal-100 flex flex-col md:flex-row rounded-2xl"
         >
@@ -82,7 +81,7 @@ const Login = ({ onLoginSuccess }) => {
           <div className="w-full md:w-3/5 p-8 md:p-12 bg-white">
             <div className="md:hidden mb-8">
               <img
-                src="/logo.png"
+                src="/logo-white.png"
                 alt="Logo"
                 className="h-10 mx-auto"
                 onError={(e) => {

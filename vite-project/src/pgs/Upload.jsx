@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
-import { 
-  Text, 
-  Title, 
-  Button, 
-  Container, 
-  Group, 
-  Paper, 
-  SimpleGrid, 
-  ThemeIcon, 
-  Progress, 
-  Image, 
+import {
+  Text,
+  Title,
+  Button,
+  Container,
+  Group,
+  Paper,
+  SimpleGrid,
+  ThemeIcon,
+  Progress,
+  Image,
   Card,
   Stepper,
   Loader,
   Badge
 } from '@mantine/core';
-import { 
-  IconUpload, 
-  IconPhotoScan, 
-  IconFileAnalytics, 
-  IconInfoCircle, 
+import {
+  IconUpload,
+  IconPhotoScan,
+  IconFileAnalytics,
+  IconInfoCircle,
   IconPhoto,
   IconCheck,
   IconX,
@@ -34,41 +34,77 @@ const Upload = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [results, setResults] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleDrop = (files) => {
     setUploadedFile(files[0]);
     setActive(1);
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
+    if (!uploadedFile) {
+      setError('No file selected');
+      return;
+    }
+
     setAnalyzing(true);
-    // Simulate analysis delay
-    setTimeout(() => {
-      setAnalyzing(false);
-      setActive(2);
-      // Mock results
+    setError(null);
+
+    try {
+      // Create FormData to send file
+      const formData = new FormData();
+      formData.append('file', uploadedFile);
+
+      // Send request to Flask backend
+      const response = await axios.post('http://localhost:5000/api/ml/detect-melanoma', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      // Process the response
+      const predictionResult = response.data;
+
+      // Transform backend response to match existing UI structure
       setResults({
-        prediction: "Melanoma",
-        confidence: 87.5,
-        risk: "High",
+        prediction: predictionResult.prediction,
+        confidence: predictionResult.confidence,
+        risk: predictionResult.prediction === 'Melanoma' ? 'High' : 'Low',
         recommendations: [
-          "Schedule an appointment with a dermatologist as soon as possible",
-          "Avoid sun exposure to the affected area",
+          predictionResult.prediction === 'Melanoma'
+            ? "Schedule an appointment with a dermatologist as soon as possible"
+            : "Continue monitoring the skin area",
+          "Avoid excessive sun exposure",
           "Take clear photos to track any changes"
         ],
-        similarCases: 156,
+        similarCases: 156, // Placeholder, as backend doesn't provide this
         differentialDiagnosis: [
-          { condition: "Melanoma", probability: 87.5 },
-          { condition: "Dysplastic nevus", probability: 8.2 },
-          { condition: "Seborrheic keratosis", probability: 4.3 }
+          {
+            condition: predictionResult.prediction,
+            probability: predictionResult.confidence
+          },
+          {
+            condition: predictionResult.prediction === 'Melanoma'
+              ? 'Benign Lesion'
+              : 'Melanoma',
+            probability: 100 - predictionResult.confidence
+          }
         ]
       });
-    }, 3000);
+
+      setActive(2);
+    } catch (err) {
+      setError(err.response?.data?.error || 'An error occurred during analysis');
+      console.error('Analysis error:', err);
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const handleReset = () => {
     setUploadedFile(null);
     setResults(null);
+    setError(null);
     setActive(0);
   };
 
@@ -91,6 +127,14 @@ const Upload = () => {
     }
   ];
 
+  {
+    error && (
+      <div className="text-red-500 mb-4">
+        {error}
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-16">
       <Container size="lg">
@@ -108,10 +152,10 @@ const Upload = () => {
               Upload a photo of your skin concern to receive AI-powered analysis and recommendations.
             </Text>
           </div>
-          
+
           <div className="p-8">
-            <Stepper 
-              active={active} 
+            <Stepper
+              active={active}
               onStepClick={setActive}
               breakpoint="sm"
               allowNextStepsSelect={false}
@@ -166,17 +210,17 @@ const Upload = () => {
                     </Group>
                   </Dropzone>
                 </div>
-                
+
                 <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} className="mt-8">
                   {tips.map((tip, index) => (
-                    <Card 
-                      key={index} 
-                      withBorder 
+                    <Card
+                      key={index}
+                      withBorder
                       radius="md"
                       padding="md"
                       className="border-teal-100"
                     >
-                      <Group align="flex-start" noWrap>
+                      <Group align="flex-start" className='flex-nowrap'>
                         <ThemeIcon
                           size={36}
                           radius="md"
@@ -230,7 +274,7 @@ const Upload = () => {
                           <li>The image is in focus and well-lit</li>
                           <li>The skin condition is centered in the frame</li>
                         </ul>
-                        
+
                         <Group>
                           <Button
                             onClick={handleReset}
@@ -251,7 +295,7 @@ const Upload = () => {
                             {analyzing ? "Analyzing..." : "Analyze Image"}
                           </Button>
                         </Group>
-                        
+
                         {analyzing && (
                           <div className="mt-6">
                             <Text size="sm" className="text-gray-600 mb-2">
@@ -283,7 +327,7 @@ const Upload = () => {
                             fit="contain"
                           />
                         </div>
-                        
+
                         <Paper withBorder p="md" radius="md" className="mt-6 border-lavender-200">
                           <Text fw={600} className="text-teal-800 mb-2">
                             Differential Diagnosis
@@ -297,11 +341,11 @@ const Upload = () => {
                                 <Text size="sm" fw={500} className={index === 0 ? "text-red-600" : "text-gray-600"}>
                                   {item.probability.toFixed(1)}%
                                 </Text>
-                                <Progress 
-                                  value={item.probability} 
-                                  size="sm" 
-                                  w={80} 
-                                  color={index === 0 ? "red" : "blue"} 
+                                <Progress
+                                  value={item.probability}
+                                  size="sm"
+                                  w={80}
+                                  color={index === 0 ? "red" : "blue"}
                                 />
                               </Group>
                             </Group>
@@ -311,26 +355,26 @@ const Upload = () => {
                           </Text>
                         </Paper>
                       </div>
-                      
+
                       <div className="md:w-3/5">
                         <div className="flex items-center gap-3 mb-6">
                           <Title order={3} className="text-teal-800">
                             Analysis Results
                           </Title>
-                          <Badge 
-                            size="lg" 
-                            radius="md" 
+                          <Badge
+                            size="lg"
+                            radius="md"
                             className="bg-red-100 text-red-700 border-red-200"
                           >
                             {results.risk} Risk
                           </Badge>
                         </div>
-                        
+
                         <Paper withBorder p="lg" radius="md" className="mb-6 border-red-200 bg-red-50/30">
                           <Group>
-                            <ThemeIcon 
-                              size={40} 
-                              radius="md" 
+                            <ThemeIcon
+                              size={40}
+                              radius="md"
                               className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
     active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
                             >
@@ -346,7 +390,7 @@ const Upload = () => {
                             </div>
                           </Group>
                         </Paper>
-                        
+
                         <Title order={4} className="text-teal-800 mb-3">
                           Recommendations
                         </Title>
@@ -355,14 +399,14 @@ const Upload = () => {
                             <li key={index}>{rec}</li>
                           ))}
                         </ul>
-                        
+
                         <Title order={4} className="text-teal-800 mb-3">
                           Next Steps
                         </Title>
                         <Text className="text-gray-700 mb-4">
                           This analysis is not a medical diagnosis. Please consult with a dermatologist for proper evaluation and treatment options.
                         </Text>
-                        
+
                         <Group className='mb-4' mt={6}>
                           <Button
                             onClick={handleReset}
@@ -382,7 +426,7 @@ const Upload = () => {
                             Find a Dermatologist
                           </Button>
                         </Group>
-                        
+
                         <Text size="sm" className="text-gray-500 mt-6">
                           You can access this analysis report anytime in your account history.
                         </Text>

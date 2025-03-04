@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   Title,
@@ -22,9 +22,18 @@ import {
   IconCheck
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  updateProfile
+} from 'firebase/auth';
+import { auth, googleProvider, facebookProvider } from '../firebaseConfig';
 
 const Signup = ({ onSignupSuccess }) => {
   const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const form = useForm({
     initialValues: {
@@ -44,22 +53,140 @@ const Signup = ({ onSignupSuccess }) => {
     },
   });
 
-  const handleSubmit = (values) => {
-    console.log('Signup values:', values);
+  const handleEmailSignup = async (values) => {
+    try {
+      // Create user with Firebase
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
 
-    // Here you would handle signup with your backend
-    // For now we'll simulate successful registration
-    localStorage.setItem('authToken', 'example-auth-token');
-    localStorage.setItem('userName', values.name);
-    localStorage.setItem('userEmail', values.email);
+      // Update profile with name
+      await updateProfile(userCredential.user, {
+        displayName: values.name
+      });
 
-    // Call the onSignupSuccess prop passed from App component
-    if (onSignupSuccess) {
-      onSignupSuccess();
-    } else {
-      // Fallback navigation if prop not provided
-      navigate('/dashboard');
+      // Get ID token to send to backend
+      const idToken = await userCredential.user.getIdToken();
+
+      // Send token to backend for additional processing
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Backend registration failed');
+      }
+
+      // Handle successful signup
+      if (onSignupSuccess) {
+        onSignupSuccess();
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      setError(error.message);
+      console.error('Signup Error:', error);
     }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const idToken = await result.user.getIdToken();
+
+      console.log('User Data:', {
+        name: result.user.displayName,
+        email: result.user.email,
+        idToken
+      });
+
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({
+          name: result.user.displayName,
+          email: result.user.email
+        })
+      });
+
+      // Important: Check response status before parsing JSON
+      const responseData = await response.json();
+
+      if (!responseData.success) {
+        throw new Error(responseData.error || 'Registration failed');
+      }
+
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Detailed Signup Error:', {
+        message: error.message,
+        code: error.code,
+        fullError: error
+      });
+      setError(error.message || 'An unexpected error occurred');
+    }
+  };
+
+  const handleFacebookSignup = async () => {
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const idToken = await result.user.getIdToken();
+
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({
+          name: result.user.displayName,
+          email: result.user.email
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Backend registration failed');
+      }
+
+      navigate('/dashboard');
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // const handleSubmit = (values) => {
+  //   console.log('Signup values:', values);
+
+  //   // Here you would handle signup with your backend
+  //   // For now we'll simulate successful registration
+  //   localStorage.setItem('authToken', 'example-auth-token');
+  //   localStorage.setItem('userName', values.name);
+  //   localStorage.setItem('userEmail', values.email);
+
+  //   // Call the onSignupSuccess prop passed from App component
+  //   if (onSignupSuccess) {
+  //     onSignupSuccess();
+  //   } else {
+  //     // Fallback navigation if prop not provided
+  //     navigate('/dashboard');
+  //   }
+  // };
+
+  const handleSubmit = (values) => {
+    handleEmailSignup(values);
   };
 
   return (
@@ -67,7 +194,6 @@ const Signup = ({ onSignupSuccess }) => {
       <Container size="lg">
         <div
           style={{ width: '100%' }}
-          withBorder
           p={0}
           className="overflow-hidden shadow-xl border-teal-100 flex flex-col md:flex-row rounded-2xl"
         >
@@ -123,7 +249,7 @@ const Signup = ({ onSignupSuccess }) => {
           <div className="w-full md:w-3/5 p-8 md:p-12 bg-white">
             <div className="md:hidden mb-8">
               <img
-                src="/logo.png"
+                src="/logo-white.png"
                 alt="Logo"
                 className="h-10 mx-auto"
                 onError={(e) => {
@@ -214,10 +340,13 @@ const Signup = ({ onSignupSuccess }) => {
                 my="lg"
               />
 
+              {error && <Text color="red">{error}</Text>}
+
               <Group grow mb="md" spacing="md">
                 <Button
                   leftSection={<IconBrandGoogle size={16} />}
                   variant="outline"
+                  onClick={handleGoogleSignup}
                   className="border-gray-300 text-gray-700"
                 >
                   Google
@@ -225,6 +354,7 @@ const Signup = ({ onSignupSuccess }) => {
                 <Button
                   leftSection={<IconBrandFacebook size={16} />}
                   variant="outline"
+                  onClick={handleFacebookSignup}
                   className="border-gray-300 text-gray-700"
                 >
                   Facebook

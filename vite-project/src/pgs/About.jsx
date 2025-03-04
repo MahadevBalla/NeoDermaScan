@@ -215,7 +215,7 @@ const About = () => {
                   size={60}
                   radius="md"
                   className="mb-4 !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
-    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2 bg-teal-100 text-teal-700 mr-4 flex-shrink-0"
+    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2 bg-teal-100 mr-4 flex-shrink-0"
                 >
                   <value.icon size={26} stroke={1.5} />
                 </ThemeIcon>
@@ -259,9 +259,7 @@ const About = () => {
                 mx="auto"
                 mb={4}
                 className="border-4 border-teal-50"
-                fallbackProps={{
-                  children: <IconUserCircle size={80} stroke={1} className="text-teal-700" />,
-                }}
+                fallback={<IconUserCircle size={80} stroke={1} className="text-teal-700" />}
               />
               <Title order={4} className="mb-1 text-teal-800">
                 {member.name}
