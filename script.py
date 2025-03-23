@@ -34,6 +34,10 @@ image_dir = os.path.join(data_dir, "train")  # Folder with images
 df = pd.read_csv(csv_path)
 df["target"] = df["target"].astype(int)  # Convert labels to integers
 
+# Print dataset summary
+print(f"Total dataset size: {len(df)}")
+print(df["target"].value_counts())  # Class distribution
+
 # Stratified Train-Validation-Test Split (80-10-10)
 train_df, temp_df = train_test_split(df, test_size=0.2, stratify=df["target"], random_state=42)
 val_df, test_df = train_test_split(temp_df, test_size=0.5, stratify=temp_df["target"], random_state=42)
@@ -81,11 +85,11 @@ class MelanomaDataset(Dataset):
 # Step 5: Load Data into DataLoaders
 train_dataset = MelanomaDataset(train_df, image_dir, train_transforms)
 val_dataset = MelanomaDataset(val_df, image_dir, val_test_transforms)
-test_dataset = MelanomaDataset(test_df, image_dir, val_test_transforms)  # New test dataset
+test_dataset = MelanomaDataset(test_df, image_dir, val_test_transforms)
 
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=0, pin_memory=True)
-val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False, num_workers=0, pin_memory=True)
-test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False, num_workers=0, pin_memory=True)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=0, pin_memory=True)
+val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=0, pin_memory=True)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=0, pin_memory=True)
 
 print(f"Train loader: {len(train_loader)}, Validation loader: {len(val_loader)}, Test loader: {len(test_loader)}")
 
@@ -104,12 +108,15 @@ class EfficientNetClassifier(nn.Module):
 model = EfficientNetClassifier(num_classes=2).to(device)
 
 # Step 7: Define Training Components
-#class imbalance handling
+# Class imbalance handling
 class_counts = torch.tensor([32542, 584], dtype=torch.float)
-weights = class_counts.sum() / class_counts  # Compute weights
-weights = weights.to("cuda")
-#---------------------------------------------------------------
-scaler = torch.amp.GradScaler('cuda')
+weights = class_counts.sum() / class_counts
+weights = weights.to(device)
+
+# Print weights for debugging
+print(f"Class weights: {weights}")
+
+scaler = torch.amp.GradScaler()
 criterion = nn.CrossEntropyLoss(weight=weights)
 optimizer = optim.AdamW(model.parameters(), lr=1e-5, weight_decay=1e-4)
 scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
@@ -123,7 +130,7 @@ def train_one_epoch(model, train_loader, optimizer, criterion, device, scaler, a
     for batch_idx, (images, labels) in enumerate(train_loader):
         images, labels = images.to(device), labels.to(device)
 
-        with torch.amp.autocast('cuda'):
+        with torch.amp.autocast(device_type="cuda"):
             outputs = model(images)
             loss = criterion(outputs, labels) / accumulation_steps
 
@@ -135,6 +142,10 @@ def train_one_epoch(model, train_loader, optimizer, criterion, device, scaler, a
             optimizer.zero_grad()
 
         running_loss += loss.item()
+
+        # Debug prints
+        if batch_idx % 10 == 0:
+            print(f"Batch {batch_idx}/{len(train_loader)} - Loss: {loss.item():.4f}")
 
     return running_loss / len(train_loader)
 
@@ -157,50 +168,43 @@ def validate(model, val_loader, criterion, device):
             correct += (predicted == labels).sum().item()
 
     val_accuracy = 100 * correct / total
+    print(f"Validation - Loss: {val_loss:.4f}, Accuracy: {val_accuracy:.2f}%")
     return val_loss / len(val_loader), val_accuracy
 
-# Step 9: Train the model with Checkpointing
-num_epochs = 3
+# Step 9: Train the Model
+num_epochs = 10
 accumulation_steps = 4
 best_acc = 0.0
 
 for epoch in range(num_epochs):
+    print(f"\nEpoch {epoch+1}/{num_epochs}")
     train_loss = train_one_epoch(model, train_loader, optimizer, criterion, device, scaler, accumulation_steps)
     val_loss, val_accuracy = validate(model, val_loader, criterion, device)
     scheduler.step()
 
-    print(f"Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%")
+    print(f"Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%")
 
-    # Save best model
     if val_accuracy > best_acc:
         best_acc = val_accuracy
         torch.save(model.state_dict(), "efficientnet_melanoma_best.pth")
         print("✅ Model Saved!")
 
-# Step 10: Generate Confusion Matrix on Test Data
-def test_model(model, test_loader, device):
-    model.eval()
-    all_preds = []
-    all_labels = []
+# Step 10: Test Model
+model.load_state_dict(torch.load("efficientnet_melanoma_best.pth"))
 
-    with torch.no_grad():
-        for images, labels in test_loader:
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
-            all_preds.extend(predicted.cpu().numpy())
-            all_labels.extend(labels.cpu().numpy())
-
-    return np.array(all_preds), np.array(all_labels)
-
-# Load Best Model
-model.load_state_dict(torch.load("model2.pth"))
-
-# Get Predictions
-preds, true_labels = test_model(model, test_loader, device)
+preds, true_labels = [], []
+with torch.no_grad():
+    for images, labels in test_loader:
+        images, labels = images.to(device), labels.to(device)
+        outputs = model(images)
+        _, predicted = torch.max(outputs, 1)
+        preds.extend(predicted.cpu().numpy())
+        true_labels.extend(labels.cpu().numpy())
 
 # Generate Confusion Matrix
 cm = confusion_matrix(true_labels, preds)
+print("Confusion Matrix:\n", cm)
+
 plt.figure(figsize=(6, 5))
 sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Benign", "Melanoma"], yticklabels=["Benign", "Melanoma"])
 plt.xlabel("Predicted")
