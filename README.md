@@ -68,7 +68,7 @@ SkinDiseaseDetection/
 ## 🖼️ Confusion Matrix
 The model's classification performance is visualized using a confusion matrix:
 
-![Confusion Matrix](ml-model/confusion_matrix.png)
+![Confusion Matrix](ml-model/confusion-matrix.png)
 
 ---
 
@@ -107,7 +107,7 @@ python script.py
 ---
 
 ## 📊 Results & Performance
-- **Best Validation Accuracy:** `XX%` (mention achieved accuracy)
+- **Best Validation Accuracy:** `82.37%` (mention achieved accuracy)
 - **Loss Reduction Trend:** Model showed smooth convergence with AdamW optimizer.
 - **Balanced Predictions:** Despite an imbalanced dataset, weighted cross-entropy loss helped improve recall.
 
@@ -117,15 +117,3 @@ python script.py
 - Implement **Grad-CAM** for explainability.
 - Improve dataset balancing with **Synthetic Oversampling**.
 - Optimize backend API with **FastAPI** for better performance.
-
----
-
-## 👨‍💻 Contributors
-- **Your Name** ([@your_handle](https://github.com/your_handle))
-- Your Team Members (if any)
-
----
-
-## 📜 License
-MIT License © 2025 Your Name
-
