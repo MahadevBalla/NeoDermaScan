@@ -27,6 +27,7 @@ import {
   IconArrowRight
 } from '@tabler/icons-react';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const Upload = () => {
@@ -56,7 +57,7 @@ const Upload = () => {
       formData.append('file', uploadedFile);
 
       // Send request to Flask backend
-      const response = await axios.post('http://localhost:5000/api/ml/detect-melanoma', formData, {
+      const response = await axios.post('/api/ml/detect-melanoma', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
