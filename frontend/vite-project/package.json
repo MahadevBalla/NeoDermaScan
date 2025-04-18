@@ -22,9 +22,13 @@
     "@tailwindcss/vite": "^4.0.9",
     "axios": "^1.8.1",
     "firebase": "^11.4.0",
+    "lucide-react": "^0.492.0",
+    "motion": "^12.7.4",
     "react": "^19.0.0",
+    "react-animate": "^3.0.0",
     "react-dom": "^19.0.0",
     "react-firebase-hooks": "^5.1.1",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.2.0",
     "tabler-icons-react": "^1.56.0",
     "tailwindcss": "^4.0.9"

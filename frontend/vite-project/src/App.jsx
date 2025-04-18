@@ -11,6 +11,7 @@ import Dashboard from './pgs/Dashboard';
 import NavBar from './NavBar';
 import AIChatAssistant from './AIChatAssistant';
 import './index.css';
+import './App.css'
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -87,14 +88,14 @@ const App = () => {
             padding={0}
             size="md"
             position="right"
-            title="AI Assistant"
+            title=""
             classNames={{
-              title: 'text-teal-600 font-bold px-1.5'
+              title: 'text-teal-600 font-bold px-4 py-2',
             }}
             zIndex={1000}
           >
             <div className="h-[calc(100vh-60px)]">
-              <AIChatAssistant />
+              <AIChatAssistant isVisible={chatDrawerOpen} />
             </div>
           </Drawer>
         </div>
