@@ -107,7 +107,7 @@ python script.py
 ---
 
 ## 📊 Results & Performance
-- **Best Validation Accuracy:** `82.37%` (mention achieved accuracy)
+- **Best Validation Accuracy:** `82.37%`
 - **Loss Reduction Trend:** Model showed smooth convergence with AdamW optimizer.
 - **Balanced Predictions:** Despite an imbalanced dataset, weighted cross-entropy loss helped improve recall.
 
