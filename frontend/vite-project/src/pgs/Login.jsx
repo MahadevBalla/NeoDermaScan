@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import {
   Text,
   Title,
@@ -13,17 +13,15 @@ import {
   Anchor,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import {
-  IconBrandGoogle,
-  IconBrandFacebook,
-  IconLock,
-  IconAt
-} from '@tabler/icons-react';
+import { IconLock, IconAt } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth, googleProvider, signInWithPopup } from "../firebaseConfig";
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../slices/authSlice';
 
-const Login = ({ onLoginSuccess }) => {
+const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
 
   const form = useForm({
     initialValues: {
@@ -38,35 +36,16 @@ const Login = ({ onLoginSuccess }) => {
   });
 
   const handleSubmit = (values) => {
-    console.log('Login values:', values);
-
-    // Here you would handle authentication with your backend
-    // For now we'll simulate successful authentication
-    localStorage.setItem('authToken', 'example-auth-token');
-    localStorage.setItem('userEmail', values.email);
-
-    // If "Remember me" is checked, set a longer expiry
-    if (values.rememberMe) {
-      localStorage.setItem('rememberMe', 'true');
-    }
-
-    // Call the onLoginSuccess prop passed from App component
-    if (onLoginSuccess) {
-      onLoginSuccess();
-    } else {
-      // Fallback navigation if prop not provided
-      navigate('/dashboard');
-    }
+    dispatch(login({
+      email: values.email,
+      password: values.password,
+      rememberMe: values.rememberMe,
+    }));
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log("User:", result.user);
-    } catch (error) {
-      console.error("Google Sign-In Error:", error.message);
-    }
-  };
+  useEffect(() => {
+    if (isAuthenticated) navigate('/profile');
+  }, [isAuthenticated]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-20 w-full">
@@ -126,58 +105,30 @@ const Login = ({ onLoginSuccess }) => {
                   label="Remember me"
                   {...form.getInputProps('rememberMe', { type: 'checkbox' })}
                 />
-                <Anchor
-                  component={Link}
-                  to="/forgot-password"
-                  size="sm"
-                  className="text-teal-700"
-                >
+                <Anchor component={Link} to="/forgot-password" size="sm" className="text-teal-700">
                   Forgot password?
                 </Anchor>
               </Group>
+
+              {error && <Text color="red" size="sm" className="mb-4">{error}</Text>}
 
               <Button
                 type="submit"
                 size="md"
                 radius="md"
                 fullWidth
+                loading={loading}
                 className="mb-4 !bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-900/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
     active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
               >
                 Sign In
               </Button>
 
-              <Divider
-                label="Or continue with"
-                labelPosition="center"
-                my="lg"
-              />
-
-              <Group grow mb="md" spacing="md">
-                <Button
-                  leftSection={<IconBrandGoogle size={16} />}
-                  variant="outline"
-                  className="border-gray-300 text-gray-700"
-                  onClick={handleGoogleSignIn}
-                >
-                  Google
-                </Button>
-                <Button
-                  leftSection={<IconBrandFacebook size={16} />}
-                  variant="outline"
-                  className="border-gray-300 text-gray-700"
-                >
-                  Facebook
-                </Button>
-              </Group>
+              <Divider label="Or continue with" labelPosition="center" my="lg" />
 
               <Text className="text-center text-gray-600 mt-6">
                 Don't have an account?{' '}
-                <Anchor
-                  component={Link}
-                  to="/signup"
-                  className="font-medium text-red-500 hover:text-red-600"
-                >
+                <Anchor component={Link} to="/signup" className="font-medium text-red-500 hover:text-red-600">
                   Create account
                 </Anchor>
               </Text>
@@ -217,15 +168,11 @@ const Login = ({ onLoginSuccess }) => {
                 <Text size="xs" className="!text-white/60">
                   "This platform has completely changed how I monitor my skin health."
                 </Text>
-                <Group align="center" mt="xs" className='text-white'>
+                <Group align="center" mt="xs" className="text-white">
                   <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm" />
                   <div>
-                    <Text size="sm" className="">
-                      Jessica M.
-                    </Text>
-                    <Text size="xs" className="!text-white/70">
-                      Platform User
-                    </Text>
+                    <Text size="sm">Jessica M.</Text>
+                    <Text size="xs" className="!text-white/70">Platform User</Text>
                   </div>
                 </Group>
               </div>

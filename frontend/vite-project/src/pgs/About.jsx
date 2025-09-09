@@ -128,29 +128,29 @@ const AnimatedSection = ({ children, className, delay = 0 }) => {
 const About = () => {
   const team = [
     {
-      name: "Dr. David Daniels",
+      name: "David Daniels",
       title: "Chief Medical Officer",
       image: "/team-david.jpg",
       fallback: "https://via.placeholder.com/200/teal/ffffff?text=SC",
       bio: "Board-certified dermatologist with 15+ years of clinical experience and a passion for technology's role in healthcare."
     },
     {
-      name: "Paarth Maha Dih",
-      title: "Lead AI Engineer",
+      name: "Paarth Mahadik",
+      title: "Lead ML Engineer",
       image: "/team-paarth2.jpg",
       fallback: "https://via.placeholder.com/200/teal/ffffff?text=MR",
-      bio: "ML specialist with background in computer vision and medical imaging analysis from Stanford University."
+      bio: "Worked on training and optimizing the machine learning model that powers our skin analysis platform."
     },
     {
-      name: "Dr. Mahadev Balla",
-      title: "Research Director",
+      name: "Mahadev Balla",
+      title: "Full Stack Developer",
       image: "/team-mahadev.jpg",
       fallback: "https://via.placeholder.com/200/teal/ffffff?text=AP",
-      bio: "PhD in Medical Informatics with extensive research on machine learning applications in dermatological diagnostics."
+      bio: "Developed the frontend and backend infrastructure of this platform."
     },
     {
       name: "Vedaant Mahale",
-      title: "Product Director",
+      title: "Product Manager",
       image: "/team-vedaant2.jpg",
       fallback: "https://via.placeholder.com/200/teal/ffffff?text=DK",
       bio: "Former healthcare product lead with experience designing intuitive medical technology interfaces."
@@ -387,7 +387,7 @@ const About = () => {
                     className="hover:shadow-lg transition-shadow border-teal-50 flex"
                   >
                     <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      whileHover={{ scale: 1.02, rotate: 1 }}
                       whileTap={{ scale: 0.95 }}
                     >
                       <ThemeIcon
@@ -451,7 +451,8 @@ const About = () => {
                     withBorder
                     p="xl"
                     radius="md"
-                    className="hover:shadow-lg transition-shadow border-teal-50 text-center"
+                    className="hover:shadow-lg transition-shadow border-teal-50 text-center flex flex-col justify-between h-full"
+                    style={{ minHeight: 420 }}
                   >
                     <motion.div
                       whileHover={{ scale: 1.1 }}
@@ -466,17 +467,20 @@ const About = () => {
                         mb={4}
                         className="border-4 border-teal-50"
                         fallback={<IconUserCircle size={80} stroke={1} className="text-teal-700" />}
+                        loading="lazy"
                       />
                     </motion.div>
-                    <Title order={4} className="mb-1 text-teal-800">
-                      {member.name}
-                    </Title>
-                    <Text className="text-lavender-700 mb-3 font-medium">
-                      {member.title}
-                    </Text>
-                    <Text className="text-gray-600 leading-relaxed mt-4">
-                      {member.bio}
-                    </Text>
+                    <div className="flex-grow">
+                      <Title order={4} className="mb-1 text-teal-800">
+                        {member.name}
+                      </Title>
+                      <Text className="text-lavender-700 mb-3 font-medium">
+                        {member.title}
+                      </Text>
+                      <Text className="text-gray-600 leading-relaxed mt-4">
+                        {member.bio}
+                      </Text>
+                    </div>
                   </Paper>
                 </motion.div>
               ))}
@@ -484,6 +488,7 @@ const About = () => {
           </motion.div>
         </Container>
       </AnimatedSection>
+
 
       {/* FAQ Section */}
       <AnimatedSection className="bg-gray-50 py-20" delay={0.3}>

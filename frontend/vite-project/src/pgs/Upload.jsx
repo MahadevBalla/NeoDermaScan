@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Text,
   Title,
@@ -27,7 +27,6 @@ import {
   IconArrowRight
 } from '@tabler/icons-react';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const Upload = () => {
@@ -44,7 +43,7 @@ const Upload = () => {
 
   const handleAnalyze = async () => {
     if (!uploadedFile) {
-      setError('No file selected');
+      setError("No file selected");
       return;
     }
 
@@ -52,51 +51,52 @@ const Upload = () => {
     setError(null);
 
     try {
-      // Create FormData to send file
       const formData = new FormData();
-      formData.append('file', uploadedFile);
+      formData.append("file", uploadedFile);
 
-      // Send request to Flask backend
-      const response = await axios.post('/api/ml/detect-melanoma', formData, {
+      const storedTokens = JSON.parse(localStorage.getItem("authTokens")) || JSON.parse(sessionStorage.getItem("authTokens"));
+      const token = storedTokens?.access;
+
+      if (!token) throw new Error("You must be logged in to analyze images");
+
+      const res = await fetch("/api/predict/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
       });
 
-      // Process the response
-      const predictionResult = response.data;
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Error during analysis");
+      }
 
-      // Transform backend response to match existing UI structure
+      const predictionResult = await res.json();
+
+      const recommendations = predictionResult.recommendations
+        ? predictionResult.recommendations.split("\n")
+        : [];
+
       setResults({
         prediction: predictionResult.prediction,
         confidence: predictionResult.confidence,
-        risk: predictionResult.prediction === 'Melanoma' ? 'High' : 'Low',
-        recommendations: [
-          predictionResult.prediction === 'Melanoma'
-            ? "Schedule an appointment with a dermatologist as soon as possible"
-            : "Continue monitoring the skin area",
-          "Avoid excessive sun exposure",
-          "Take clear photos to track any changes"
-        ],
-        similarCases: 156, // Placeholder, as backend doesn't provide this
+        risk: predictionResult.risk,
+        recommendations,
+        similarCases: 156,
         differentialDiagnosis: [
+          { condition: predictionResult.prediction, probability: predictionResult.confidence },
           {
-            condition: predictionResult.prediction,
-            probability: predictionResult.confidence
+            condition: predictionResult.prediction === "Melanoma" ? "Benign" : "Melanoma",
+            probability: 100 - predictionResult.confidence,
           },
-          {
-            condition: predictionResult.prediction === 'Melanoma'
-              ? 'Benign Lesion'
-              : 'Melanoma',
-            probability: 100 - predictionResult.confidence
-          }
-        ]
+        ],
       });
 
       setActive(2);
     } catch (err) {
-      setError(err.response?.data?.error || 'An error occurred during analysis');
-      console.error('Analysis error:', err);
+      setError(err.message);
+      console.error("Analysis error:", err);
     } finally {
       setAnalyzing(false);
     }

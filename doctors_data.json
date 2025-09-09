@@ -1,0 +1,362 @@
+[
+    {
+        "name": "Dr. Soma Sarkar",
+        "address": "Flat No. 102, 1st Floor, Gasper Enclave, Gyan Mandir Building, Pali Mala Rd, next to Irish House, Bandra West, Mumbai, Maharashtra 400050, India",
+        "phone": "+91 98334 43239",
+        "location": {
+            "latitude": 19.0601,
+            "longitude": 72.8267
+        },
+        "specialization": "Dermatologist, Skin care clinic",
+        "clinic_name": "",
+        "website": "https://www.drshomasarkar.com"
+    },
+    {
+        "name": "Dr. Bhushan S Bawankar",
+        "address": "Shop no. 4, Nilesh Building, Senapati Bapat Marg, near Ruparel college, Mahalaxmi Sindhi Colony, Matunga West, Mumbai, Maharashtra 400016, India",
+        "phone": "+91 79001 46605",
+        "location": {
+            "latitude": 19.0222,
+            "longitude": 72.8428
+        },
+        "specialization": "Dermatologist, Hair & Skin Care Treatment Specialist",
+        "clinic_name": "Skin Town Clinic",
+        "website": "https://skintown.co.in"
+    },
+    {
+        "name": "",
+        "address": "25A, 27B, 27C Ground Floor, Panchratna Building, next to Roxy Theatre, Charni Road East, Opera House, Girgaon, Mumbai, Maharashtra 400004, India",
+        "phone": "+91 93245 89084",
+        "location": {
+            "latitude": 18.9532,
+            "longitude": 72.8205
+        },
+        "specialization": "Laser Hair Removal, PRP, Hair Transplant, Dermatologist",
+        "clinic_name": "Viva Aesthetic Clinic",
+        "website": "https://vivaaestheticclinic.com"
+    },
+    {
+        "name": "Dr. Uddhao Zambare",
+        "address": "Gleneagles Hospital, 35, Dr Ernest Borges Rd, Parel East, Parel, Mumbai, Maharashtra 400012, India",
+        "phone": "+91 99679 29976",
+        "location": {
+            "latitude": 18.9951,
+            "longitude": 72.8288
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon, Pediatric dermatologist",
+        "clinic_name": "",
+        "website": "http://druddhaoskin.com"
+    },
+    {
+        "name": "Dr. Preeti Kothari Shah",
+        "address": "Mehta House, 108 & 109, opposite Bhartya Vidya Bhavan, Chowpatty, Malabar Hill, Mumbai, Maharashtra 400007, India",
+        "phone": "+91 93247 70887",
+        "location": {
+            "latitude": 18.9541,
+            "longitude": 72.8034
+        },
+        "specialization": "Dermatologist, Laser hair removal service",
+        "clinic_name": "Skinerva Clinic",
+        "website": "https://www.skinervaclinic.co"
+    },
+    {
+        "name": "",
+        "address": "Linkway Estate, 30, New Link Rd, next to ICICI BANK, near Inorbit Mall, Malad, Ram Nagar, Malad West, Mumbai, Maharashtra 400064, India",
+        "phone": "+91 80 6968 0304",
+        "location": {
+            "latitude": 19.1812,
+            "longitude": 72.8344
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon, Hair transplantation clinic",
+        "clinic_name": "Tender Skin & Hair Clinic (Malad)",
+        "website": "http://malad.tenderskininternational.com"
+    },
+    {
+        "name": "",
+        "address": "Sorrento, Shop - 002, Veera Desai Rd, Shastri Nagar, Andheri West, Mumbai, Maharashtra 400053, India",
+        "phone": "+91 98338 89680",
+        "location": {
+            "latitude": 19.1306,
+            "longitude": 72.8336
+        },
+        "specialization": "Skin care clinic, Dermatologist, Laser hair removal",
+        "clinic_name": "Cutis Skin Clinic",
+        "website": "https://www.cutis.in"
+    },
+    {
+        "name": "Dr. Poornima",
+        "address": "6th floor, 608, Signature Business Park, Postal Colony Rd, Postal Colony, Chembur, Mumbai, Maharashtra 400071, India",
+        "phone": "",
+        "location": {
+            "latitude": 19.0573,
+            "longitude": 72.8825
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon",
+        "clinic_name": "Luminous skin and hair clinic",
+        "website": "https://www.luminousskinclinic.com"
+    },
+    {
+        "name": "Dr. Sonal Shah",
+        "address": "1st Floor, Cosmos Court CHS Ltd, 103, Swami Vivekananda Rd, near Vile Parle Station, Navpada, Signal, Vile Parle West, Mumbai, Maharashtra 400056, India",
+        "phone": "+91 84694 43109",
+        "location": {
+            "latitude": 19.1004,
+            "longitude": 72.8475
+        },
+        "specialization": "Dermatologist, Pediatric dermatologist",
+        "clinic_name": "SkinMD Clinics",
+        "website": "https://www.skinmdclinics.com"
+    },
+    {
+        "name": "Dr. Avina Jain",
+        "address": "2nd Floor, Sapphire Plaza, Dadabhai Rd, opp. CNM School, Pond Gaothan, Navpada, Kamala Nagar, Vile Parle West, Mumbai, Maharashtra 400056, India",
+        "phone": "+91 91360 95925",
+        "location": {
+            "latitude": 19.1052,
+            "longitude": 72.8384
+        },
+        "specialization": "Dermatologist, Venereologist",
+        "clinic_name": "Auro Skin Clinic",
+        "website": "https://www.auroskin.in"
+    },
+    {
+        "name": "Dr Madhuri Agarwal",
+        "address": "Ground Floor, Ram Janki, 356, Linking Rd, Khar, Khar West, Mumbai, Maharashtra 400052, India",
+        "phone": "+91 83693 32315",
+        "location": {
+            "latitude": 19.0667,
+            "longitude": 72.8356
+        },
+        "specialization": "Dermatologist, Hair transplantation clinic",
+        "clinic_name": "Yavana Skin & Hair Clinic",
+        "website": "https://www.yavana.in"
+    },
+    {
+        "name": "Dr Rachita Dhurat",
+        "address": "9th floor, 906 Signature Business Park Postal colony Road, K A, Gaikwad Road, Chembur, Mumbai, Maharashtra 400071, India",
+        "phone": "+91 98197 07521",
+        "location": {
+            "latitude": 19.0583,
+            "longitude": 72.8893
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon, Pediatric dermatologist",
+        "clinic_name": "",
+        "website": "https://www.rdskin.com"
+    },
+    {
+        "name": "Dr Sonia Tekchandani",
+        "address": "Linkway Estate, 30, New Link Rd, near Inorbit Mall, Malad West, Mumbai, Maharashtra 400064, India",
+        "phone": "+91 80 6968 0304",
+        "location": {
+            "latitude": 19.1803,
+            "longitude": 72.8347
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon, Hair transplantation clinic",
+        "clinic_name": "Tender Skin & Hair Clinic (Malad)",
+        "website": "http://malad.tenderskininternational.com"
+    },
+    {
+        "name": "",
+        "address": "Shop No. 203/ 2nd Floor, DGS Sheetal Ekta, opposite fire brigade, near Oberoi Mall, Shivdham Complex, Dindoshi, Malad East, Mumbai, Maharashtra 400097, India",
+        "phone": "+91 98334 31663",
+        "location": {
+            "latitude": 19.1736,
+            "longitude": 72.8617
+        },
+        "specialization": "Dermatologist, Facial spa",
+        "clinic_name": "Rivo Skin Care Clinic",
+        "website": "https://www.rivoskin.com"
+    },
+    {
+        "name": "Dr Bhushan S Bawankar",
+        "address": "Shop no. 4, Nilesh Building, Senapati Bapat Marg, near Ruparel college, Matunga West, Mumbai, Maharashtra 400016, India",
+        "phone": "+91 79001 46605",
+        "location": {
+            "latitude": 19.0285,
+            "longitude": 72.8536
+        },
+        "specialization": "Dermatologist, Hair & Skin Care",
+        "clinic_name": "Skin Town Clinic",
+        "website": "https://skintown.co.in"
+    },
+    {
+        "name": "",
+        "address": "Ground Floor, Dhairya Apartments, Shop No.G-03, 11th Rd, opp. Madhu Park, Khar West, Mumbai, Maharashtra 400052, India",
+        "phone": "+91 82919 27889",
+        "location": {
+            "latitude": 19.0748,
+            "longitude": 72.8339
+        },
+        "specialization": "Dermatologist, Laser hair removal",
+        "clinic_name": "Metamorphosis Clinic",
+        "website": "https://www.metamorphosis-clinic.com"
+    },
+    {
+        "name": "Dr Mrinmayee Mukund",
+        "address": "5th Floor, Cozderm Clinic, Signature Business Park, 505, above ACME Hospital, Postal Colony, Chembur, Mumbai, Maharashtra 400071, India",
+        "phone": "+91 98191 95150",
+        "location": {
+            "latitude": 19.0586,
+            "longitude": 72.8890
+        },
+        "specialization": "Dermatologist, Cosmetologist",
+        "clinic_name": "Cozderm Clinic",
+        "website": "https://drmrinmayeemd.com"
+    },
+    {
+        "name": "Dr Mallika",
+        "address": "Marve Link Apartments, Shri Siddhivinayak clinic, Marve Rd, Mithchowki, Malad West, Mumbai, Maharashtra 400064, India",
+        "phone": "",
+        "location": {
+            "latitude": 19.2018,
+            "longitude": 72.8307
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon",
+        "clinic_name": "SKIN CLINIC SIDDHIVINIYAK",
+        "website": "https://www.instagram.com/skinovita_clinic/?hl=en"
+    },
+    {
+        "name": "Dr Ishwari Kulkarni",
+        "address": "Shop no 9, Sadguru Tower, SATELLITE GARDEN, Film City Rd, below radhkrishna hospital, Azad Nagar, Gokuldham Colony, Goregaon, Mumbai, Maharashtra 400063, India",
+        "phone": "+91 98920 43584",
+        "location": {
+            "latitude": 19.1717,
+            "longitude": 72.8598
+        },
+        "specialization": "Dermatologist, Pediatric dermatologist",
+        "clinic_name": "",
+        "website": "http://drishwarikulkarni.com"
+    },
+    {
+        "name": "Dr Yuti Nakhwa",
+        "address": "8th Floor, Kohinoor Square, 811, opposite Shiv Sena Bhavan, Dadar West, Mumbai, Maharashtra 400028, India",
+        "phone": "+91 89288 75159",
+        "location": {
+            "latitude": 19.0176,
+            "longitude": 72.8421
+        },
+        "specialization": "Dermatologist",
+        "clinic_name": "Elixir Skin and Hair Clinic",
+        "website": "https://elixirskinandhairclinic.com"
+    },
+    {
+        "name": "Dr Hetal Pathak",
+        "address": "Shop No. 5, Vikram Society, Navghar Road, Tata Colony Rd, near Eastern Express Highway, Mulund East, Mumbai, Maharashtra 400081, India",
+        "phone": "+91 99678 86581",
+        "location": {
+            "latitude": 19.1727,
+            "longitude": 72.9556
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon, Pediatric dermatologist",
+        "clinic_name": "Skin World Clinic",
+        "website": "https://www.drhetalpathak.com"
+    },
+    {
+        "name": "",
+        "address": "001, A Wing, Building No. E/18, Ground Floor, Yogi Guru Kripa Society, Yogi Nagar, Eksar Road, Borivali West, Maharashtra 400092, India",
+        "phone": "+91 93262 59570",
+        "location": {
+            "latitude": 19.2361,
+            "longitude": 72.8468
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon",
+        "clinic_name": "Nine Eleven Clinic Borivali",
+        "website": "https://nineelevenclinic.com"
+    },
+    {
+        "name": "Dr Sweta Sinha",
+        "address": "Vishwa CHS, 60ft Road, RB Mehta Marg, opposite Dolphin Franky, Ghatkopar East, Mumbai, Maharashtra 400077, India",
+        "phone": "+91 98700 70066",
+        "location": {
+            "latitude": 19.0924,
+            "longitude": 72.9146
+        },
+        "specialization": "Dermatologist, Hair Specialist",
+        "clinic_name": "Alana Skin Hair Laser Clinic",
+        "website": "https://alanaskinhairlaserclnic.com"
+    },
+    {
+        "name": "Dr. Uddhao Zambare",
+        "address": "Gleneagles Hospital, 35, Dr Ernest Borges Rd, Parel East, Parel, Mumbai, Maharashtra 400012, India",
+        "phone": "+91 99679 29976",
+        "location": {
+            "latitude": 18.9951,
+            "longitude": 72.8288
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon, Pediatric dermatologist",
+        "clinic_name": "",
+        "website": "http://druddhaoskin.com"
+    },
+    {
+        "name": "Dr. Reshma Ahuja",
+        "address": "Sorrento Building 803, opp. Golden Oak, near Aroma's Cafe, Hiranandani Gardens, Powai, Mumbai, Maharashtra 400076, India",
+        "phone": "+91 98202 81901",
+        "location": {
+            "latitude": 19.1175,
+            "longitude": 72.9053
+        },
+        "specialization": "Dermatologist, Cosmetologist, Trichologist",
+        "clinic_name": "",
+        "website": "http://www.drreshmaahuja.com"
+    },
+    {
+        "name": "Dr Madhuri Agarwal",
+        "address": "236-239, 2nd Floor Hallmark Complex, LBS Marg, Marathon Ave, Moti Nagar, Vasant Oscar, Mulund West, Mumbai, Maharashtra 400080, India",
+        "phone": "+91 74987 61629",
+        "location": {
+            "latitude": 19.1757,
+            "longitude": 72.9425
+        },
+        "specialization": "Dermatologist",
+        "clinic_name": "Yavana Skin & Hair Clinic",
+        "website": "http://www.yavana.in"
+    },
+    {
+        "name": "",
+        "address": "A-Ground Floor, Lancelot Apartments, Swami Vivekananda Rd, opposite Kalyan Jewellers, Shastri Nagar, Sumer Nagar, Borivali West, Mumbai, Maharashtra 400092, India",
+        "phone": "+91 86573 55999",
+        "location": {
+            "latitude": 19.2369,
+            "longitude": 72.8581
+        },
+        "specialization": "Dermatologist, Allergist, Cosmetic surgeon",
+        "clinic_name": "B.A.E SKIN CLINIC",
+        "website": "http://baeskinclinic.com"
+    },
+    {
+        "name": "Dr. Anuya A Manerkar",
+        "address": "Vihar Drashan, A/4, 7th Road, Rajawadi Colony, Vidya Vihar East, Mumbai, Maharashtra 400077, India",
+        "phone": "+91 88793 41323",
+        "location": {
+            "latitude": 19.0935,
+            "longitude": 72.9021
+        },
+        "specialization": "Dermatologist, Cosmetic surgeon, Pediatric dermatologist",
+        "clinic_name": "Panache Clinic",
+        "website": "https://www.panacheclinicdranuya.in"
+    },
+    {
+        "name": "Dr. Bhushan S Bawankar",
+        "address": "Shop no. 4, Nilesh Building, Senapati Bapat Marg, near Ruparel college, Mahalaxmi Sindhi Colony, Matunga West, Mumbai, Maharashtra 400016, India",
+        "phone": "+91 79001 46605",
+        "location": {
+            "latitude": 19.0285,
+            "longitude": 72.8536
+        },
+        "specialization": "Dermatologist, Hair & Skin Care",
+        "clinic_name": "Skin Town Clinic",
+        "website": "https://skintown.co.in"
+    },
+    {
+        "name": "Dr. Varsha Khatry",
+        "address": "Sorrento 1302, Hiranandani Gardens, Powai, Mumbai, Maharashtra 400076, India",
+        "phone": "+91 91527 79935",
+        "location": {
+            "latitude": 19.1232,
+            "longitude": 72.9122
+        },
+        "specialization": "Hair & Skin Specialist",
+        "clinic_name": "Dr. Khatry's Med Aesthetic Clinic",
+        "website": "https://drkhatrysclinic.com"
+    }
+]
