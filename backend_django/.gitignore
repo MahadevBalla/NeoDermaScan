@@ -6,12 +6,13 @@ __pycache__/
 
 *.pyc
 
+.venv/
 venv/
+env/
 .env
 
 media/
 staticfiles/
-
 **/migrations/__pycache__/
 
 .vscode/
