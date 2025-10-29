@@ -249,21 +249,11 @@ const Home = () => {
                   to="/signup"
                   size="lg"
                   radius="md"
-                  className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-500/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 
-    active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
-                >
-                  Create Free Account
-                </Button>
-                <Button
-                  component={Link}
-                  to="/upload"
                   variant="outline"
-                  size="lg"
-                  radius="md"
                   color="red"
                   className="!text-white-500 !border-white-500 hover:!border-red-500 hover:!bg-red-500 hover:!text-white transform hover:!scale-103 transition-all duration-300 !shadow-md"
                 >
-                  Try Without Account
+                  Create Free Account
                 </Button>
               </Group>
             </div>

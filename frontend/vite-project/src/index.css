@@ -1,1 +1,19 @@
 @import "tailwindcss";
+/* Ensure modal and dropdowns have highest z-index */
+.mantine-Modal-modal {
+  z-index: 9999 !important;
+}
+
+.mantine-Modal-overlay {
+  z-index: 9998 !important;
+}
+
+.mantine-Select-dropdown {
+  z-index: 10001 !important;
+  position: fixed !important;
+}
+
+/* Ensure modal content is above everything */
+.mantine-Modal-content {
+  z-index: 9999 !important;
+}

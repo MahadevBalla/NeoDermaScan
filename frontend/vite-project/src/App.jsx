@@ -7,11 +7,14 @@ import { refreshToken, fetchProfile } from './slices/authSlice';
 import NavBar from "./components/NavBar";
 import Home from "./pgs/Home";
 import Signup from "./pgs/Signup";
+import './index.css'; // or whatever you named your CSS file
 const Login = lazy(() => import("./pgs/Login"));
 const About = lazy(() => import("./pgs/About"));
 const Upload = lazy(() => import("./pgs/Upload"));
 const MyProfile = lazy(() => import("./pgs/MyProfile"));
+const FindDermatologist = lazy(() => import("./pgs/FindDermatologist"));
 const AIChatAssistant = lazy(() => import("./components/AIChatAssistant"));
+
 
 function PrivateRoute({ children }) {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -48,14 +51,16 @@ const App = () => {
                 element={
                   <PrivateRoute>
                     <Upload />
-                  </PrivateRoute>}
+                  </PrivateRoute>
+                }
               />
               <Route
                 path="/find-doctor"
                 element={
                   <PrivateRoute>
-                    <Upload />
-                  </PrivateRoute>}
+                    <FindDermatologist />
+                  </PrivateRoute>
+                }
               />
               <Route
                 path="/profile"

@@ -126,36 +126,36 @@ const AnimatedSection = ({ children, className, delay = 0 }) => {
 };
 
 const About = () => {
-  const team = [
-    {
-      name: "David Daniels",
-      title: "Chief Medical Officer",
-      image: "/team-david.jpg",
-      fallback: "https://via.placeholder.com/200/teal/ffffff?text=SC",
-      bio: "Board-certified dermatologist with 15+ years of clinical experience and a passion for technology's role in healthcare."
-    },
-    {
-      name: "Paarth Mahadik",
-      title: "Lead ML Engineer",
-      image: "/team-paarth2.jpg",
-      fallback: "https://via.placeholder.com/200/teal/ffffff?text=MR",
-      bio: "Worked on training and optimizing the machine learning model that powers our skin analysis platform."
-    },
-    {
-      name: "Mahadev Balla",
-      title: "Full Stack Developer",
-      image: "/team-mahadev.jpg",
-      fallback: "https://via.placeholder.com/200/teal/ffffff?text=AP",
-      bio: "Developed the frontend and backend infrastructure of this platform."
-    },
-    {
-      name: "Vedaant Mahale",
-      title: "Product Manager",
-      image: "/team-vedaant2.jpg",
-      fallback: "https://via.placeholder.com/200/teal/ffffff?text=DK",
-      bio: "Former healthcare product lead with experience designing intuitive medical technology interfaces."
-    },
-  ];
+  //  const team = [
+  //   {
+  //     name: "David Daniels",
+  //     title: "Chief Medical Officer",
+  //     image: "/team-david.jpg",
+  //     fallback: "https://via.placeholder.com/200/teal/ffffff?text=SC",
+  //     bio: "Board-certified dermatologist with 15+ years of clinical experience and a passion for technology's role in healthcare."
+  //   },
+  //   {
+  //     name: "Paarth Mahadik",
+  //     title: "Lead ML Engineer",
+  //     image: "/team-paarth2.jpg",
+  //     fallback: "https://via.placeholder.com/200/teal/ffffff?text=MR",
+  //     bio: "Worked on training and optimizing the machine learning model that powers our skin analysis platform."
+  //   },
+  //   {
+  //     name: "Mahadev Balla",
+  //     title: "Full Stack Developer",
+  //     image: "/team-mahadev.jpg",
+  //     fallback: "https://via.placeholder.com/200/teal/ffffff?text=AP",
+  //     bio: "Developed the frontend and backend infrastructure of this platform."
+  //   },
+  //   {
+  //     name: "Vedaant Mahale",
+  //     title: "Product Manager",
+  //     image: "/team-vedaant2.jpg",
+  //     fallback: "https://via.placeholder.com/200/teal/ffffff?text=DK",
+  //     bio: "Former healthcare product lead with experience designing intuitive medical technology interfaces."
+  //   },
+  // ];
 
   const values = [
     {
@@ -416,7 +416,8 @@ const About = () => {
         </Container>
       </AnimatedSection>
 
-      {/* Team Section */}
+      {/* Team Section - COMMENTED OUT */}
+      {/*
       <AnimatedSection className="py-20" delay={0.2}>
         <Container size="lg">
           <MotionTitle
@@ -488,6 +489,7 @@ const About = () => {
           </motion.div>
         </Container>
       </AnimatedSection>
+      */}
 
 
       {/* FAQ Section */}
@@ -543,35 +545,6 @@ const About = () => {
                 ))}
               </Accordion>
             </Paper>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <Box className="max-w-3xl mx-auto mt-12 text-center">
-              <Text className="text-gray-600 mb-4">
-                Didn't find what you're looking for? Contact our support team for more information.
-              </Text>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  component={Link}
-                  to="/contact"
-                  variant="outline"
-                  color='red'
-                  size="md"
-                  radius="md"
-                  className="mt-4 !text-white-500 !border-white-500 hover:!border-red-500 hover:!bg-red-500 hover:!text-white transform hover:!scale-103 transition-all duration-300 !shadow-md"
-                >
-                  Contact Us
-                </Button>
-              </motion.div>
-            </Box>
           </motion.div>
         </Container>
       </AnimatedSection>
