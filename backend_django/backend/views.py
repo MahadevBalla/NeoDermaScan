@@ -107,7 +107,12 @@ class PredictView(APIView):
         send_notification(
             user=request.user,
             subject="Diagnosis Complete",
-            message=f"Your skin lesion analysis is complete. Result: {result['prediction']} with {result['confidence']}% confidence. Risk Level: {result['risk']}.",
+            message=f"Hello {request.user.full_name or ''}, your skin lesion analysis is complete.\n"
+            f"Prediction: {result['prediction']}\n"
+            f"Confidence: {result['confidence']}%\n"
+            f"Risk Level: {result['risk']}\n\n"
+            f"Recommendations:\n- " + "\n- ".join(result["recommendations"]) + "\n\n"
+            "Please consult a dermatologist for further evaluation if needed.",
             notification_type="diagnosis_complete",
         )
 
@@ -215,7 +220,12 @@ class AppointmentView(generics.ListCreateAPIView):
         send_notification(
             user=appointment.user,
             subject="Appointment Confirmation",
-            message=f"Your appointment with Dr. {appointment.doctor.name} at {appointment.doctor.hospital} on {appointment.date} at {appointment.time_slot} is confirmed.",
+            message=f"Hello {appointment.user.full_name or ''}, your appointment has been confirmed!\n"
+            f"Doctor: Dr. {appointment.doctor.name} ({appointment.doctor.specialization})\n"
+            f"Hospital: {appointment.doctor.hospital}\n"
+            f"Date: {appointment.date}\n"
+            f"Time: {appointment.time_slot}\n\n"
+            "Please arrive 10-15 minutes early and carry any previous medical reports.",
             notification_type="appointment_confirmation",
         )
 
@@ -242,7 +252,10 @@ class AppointmentDetailView(generics.RetrieveUpdateDestroyAPIView):
                 send_notification(
                     user=instance.user,
                     subject="Appointment Cancelled",
-                    message=f"Your appointment with Dr. {instance.doctor.name} at {instance.doctor.hospital} on {instance.date} at {instance.time_slot} has been cancelled.",
+                    message=f"Hello {instance.user.full_name or ''},\n\n"
+                    f"Your appointment with Dr. {instance.doctor.name}({instance.doctor.specialization}) at {instance.doctor.hospital} on {instance.date} at {instance.time_slot} has been cancelled.\n\n"
+                    "You can book a new appointment at your convenience."
+                    "Thank you for keeping us informed!",
                     notification_type="appointment_cancellation",
                 )
 

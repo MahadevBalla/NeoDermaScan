@@ -122,6 +122,26 @@ class AppointmentSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "user", "created_at", "status"]
 
+    def validate(self, attrs):
+        doctor_id = attrs.get("doctor_id")
+        date = attrs.get("date")
+        time_slot = attrs.get("time_slot")
+
+        # Check for conflicts only with active appointments
+        if (
+            Appointment.objects.filter(
+                doctor_id=doctor_id, date=date, time_slot=time_slot
+            )
+            .exclude(status="cancelled")
+            .exists()
+        ):
+            raise serializers.ValidationError(
+                {
+                    "non_field_errors": "This time slot is already booked for the selected doctor."
+                }
+            )
+        return attrs
+
     def create(self, validated_data):
         doctor_id = validated_data.pop("doctor_id")
         try:

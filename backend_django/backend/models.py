@@ -166,7 +166,13 @@ class Appointment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("doctor", "date", "time_slot")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["doctor", "date", "time_slot"],
+                condition=models.Q(status="booked"),
+                name="unique_active_appointment",
+            )
+        ]
         ordering = ["-created_at"]
 
     def __str__(self):

@@ -20,6 +20,7 @@ djangorestframework_simplejwt==5.5.1
 filelock==3.19.1
 frozenlist==1.8.0
 fsspec==2025.9.0
+gunicorn==23.0.0
 h11==0.16.0
 h2==4.3.0
 hf-xet==1.1.10
