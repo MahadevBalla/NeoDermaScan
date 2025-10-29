@@ -1,4 +1,5 @@
 import os
+from django.db import models
 import tempfile
 
 from django.contrib.auth import get_user_model
@@ -131,79 +132,93 @@ class NearbyDoctorsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        user_lat = float(request.data.get("lat"))
-        user_lon = float(request.data.get("lon"))
-        max_distance = float(request.data.get("radius", 10))
+        try:
+            user_lat = float(request.data.get("lat"))
+            user_lon = float(request.data.get("lon"))
+            max_distance = float(request.data.get("radius", 10))
+            specialization = request.data.get("specialization", None)
+            city = request.data.get("city", None)
+            search = request.data.get("search", None)
 
-        # Filter parameters
-        specialization = request.data.get("specialization", None)
-        city = request.data.get("city", None)
+            # Start with all doctors
+            doctors_qs = Doctor.objects.all()
 
-        # Start with all doctors
-        doctors_qs = Doctor.objects.all()
+            # Apply filters if provided
+            if specialization:
+                doctors_qs = doctors_qs.filter(specialization__icontains=specialization)
+            if city:
+                # Filter by city in address
+                doctors_qs = doctors_qs.filter(
+                    addresses__city__icontains=city
+                ).distinct()
+            if search:
+                doctors_qs = doctors_qs.filter(
+                    models.Q(name__icontains=search)
+                    | models.Q(hospital__icontains=search)
+                    | models.Q(specialization__icontains=search)
+                ).distinct()
 
-        # Apply filters if provided
-        if specialization:
-            doctors_qs = doctors_qs.filter(specialization__icontains=specialization)
-        if city:
-            # Filter by city in address
-            doctors_qs = doctors_qs.filter(addresses__city__icontains=city).distinct()
+            doctors = []
+            for doc in doctors_qs:
+                # Get doctor's primary address for location
+                primary_addr = doc.primary_address
+                if (
+                    not primary_addr
+                    or not primary_addr.latitude
+                    or not primary_addr.longitude
+                ):
+                    # Skip doctors without valid location data
+                    continue
 
-        doctors = []
-        for doc in doctors_qs:
-            # Get doctor's primary address for location
-            primary_addr = doc.primary_address
-            if (
-                not primary_addr
-                or not primary_addr.latitude
-                or not primary_addr.longitude
-            ):
-                continue
-
-            distance = haversine(
-                user_lat, user_lon, primary_addr.latitude, primary_addr.longitude
-            )
-            if distance <= max_distance:
-                doctor_data = DoctorSerializer(doc).data
-                doctor_data["distance_km"] = round(distance, 2)
-
-                # Include primary address details
-                if primary_addr:
-                    doctor_data["address"] = AddressSerializer(primary_addr).data
-
-                doctors.append((distance, doctor_data))
-
-        # Sort by distance
-        doctors.sort(key=lambda x: x[0])
-        doctor_data_list = [doc_data for _, doc_data in doctors]
-
-        # If less than 5 doctors, supplement with Google Places
-        if len(doctor_data_list) < 5:
-            hospitals = get_nearby_hospitals(
-                user_lat, user_lon, radius=int(max_distance * 1000)
-            )
-            for h in hospitals[: 5 - len(doctor_data_list)]:
-                doctor_data_list.append(
-                    {
-                        "id": None,
-                        "name": h["name"],
-                        "specialization": "General",
-                        "hospital": h["name"],
-                        "address": {
-                            "address_line_1": h.get("vicinity", ""),
-                            "city": "",
-                            "state": "",
-                            "country": "India",
-                            "latitude": h["geometry"]["location"]["lat"],
-                            "longitude": h["geometry"]["location"]["lng"],
-                        },
-                        "phone": None,
-                        "email": None,
-                        "distance_km": None,
-                    }
+                distance = haversine(
+                    user_lat, user_lon, primary_addr.latitude, primary_addr.longitude
                 )
+                if distance <= max_distance:
+                    doctor_data = DoctorSerializer(doc).data
+                    doctor_data["distance_km"] = round(distance, 2)
 
-        return Response(doctor_data_list)
+                    # Include primary address details
+                    if primary_addr:
+                        doctor_data["address"] = AddressSerializer(primary_addr).data
+
+                    doctors.append((distance, doctor_data))
+
+            # Sort by distance
+            doctors.sort(key=lambda x: x[0])
+            doctor_data_list = [doc_data for _, doc_data in doctors]
+
+            # If no doctors found within the radius, return all doctors with distance info
+            if not doctor_data_list:
+                for doc in doctors_qs:
+                    primary_addr = doc.primary_address
+                    if (
+                        not primary_addr
+                        or not primary_addr.latitude
+                        or not primary_addr.longitude
+                    ):
+                        continue
+
+                    distance = haversine(
+                        user_lat,
+                        user_lon,
+                        primary_addr.latitude,
+                        primary_addr.longitude,
+                    )
+                    doctor_data = DoctorSerializer(doc).data
+                    doctor_data["distance_km"] = round(distance, 2)
+
+                    if primary_addr:
+                        doctor_data["address"] = AddressSerializer(primary_addr).data
+
+                    doctors.append((distance, doctor_data))
+
+                # Sort by distance
+                doctors.sort(key=lambda x: x[0])
+                doctor_data_list = [doc_data for _, doc_data in doctors]
+
+            return Response(doctor_data_list)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 
 class AppointmentView(generics.ListCreateAPIView):
@@ -211,23 +226,83 @@ class AppointmentView(generics.ListCreateAPIView):
     serializer_class = AppointmentSerializer
 
     def get_queryset(self):
-        return Appointment.objects.filter(user=self.request.user)
+        # Check if doctor_id and date query parameters are provided
+        doctor_id = self.request.query_params.get("doctor_id")
+        date = self.request.query_params.get("date")
 
-    def perform_create(self, serializer):
-        appointment = serializer.save(user=self.request.user)
+        if doctor_id and date:
+            # Return all appointments for the specified doctor and date
+            return Appointment.objects.filter(doctor_id=doctor_id, date=date)
+        else:
+            # Return only the current user's appointments
+            return Appointment.objects.filter(user=self.request.user)
 
-        # Send appointment confirmation notification
-        send_notification(
-            user=appointment.user,
-            subject="Appointment Confirmation",
-            message=f"Hello {appointment.user.full_name or ''}, your appointment has been confirmed!\n"
-            f"Doctor: Dr. {appointment.doctor.name} ({appointment.doctor.specialization})\n"
-            f"Hospital: {appointment.doctor.hospital}\n"
-            f"Date: {appointment.date}\n"
-            f"Time: {appointment.time_slot}\n\n"
-            "Please arrive 10-15 minutes early and carry any previous medical reports.",
-            notification_type="appointment_confirmation",
-        )
+    def create(self, request, *args, **kwargs):
+        try:
+            # Get doctor_id from request data
+            doctor_id = request.data.get("doctor_id")
+            if not doctor_id:
+                return Response(
+                    {"error": "Doctor ID is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Get date and time_slot from request data
+            date = request.data.get("date")
+            time_slot = request.data.get("time_slot")
+
+            if not date or not time_slot:
+                return Response(
+                    {"error": "Date and time are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Check if doctor exists
+            try:
+                doctor = Doctor.objects.get(id=doctor_id)
+            except Doctor.DoesNotExist:
+                return Response(
+                    {"error": "Doctor not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Check if the time slot is available
+            if Appointment.objects.filter(
+                doctor=doctor, date=date, time_slot=time_slot, status="booked"
+            ).exists():
+                return Response(
+                    {"error": "This time slot is already booked"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Create appointment
+            appointment = Appointment.objects.create(
+                user=request.user,
+                doctor=doctor,
+                date=date,
+                time_slot=time_slot,
+                status="booked",
+            )
+
+            # Send appointment confirmation notification
+            send_notification(
+                user=appointment.user,
+                subject="Appointment Confirmation",
+                message=f"Hello {appointment.user.full_name or ''}, your appointment has been confirmed!\n"
+                f"Doctor: Dr. {appointment.doctor.name} ({appointment.doctor.specialization})\n"
+                f"Hospital: {appointment.doctor.hospital}\n"
+                f"Date: {appointment.date}\n"
+                f"Time: {appointment.time_slot}\n\n"
+                "Please arrive 10-15 minutes early and carry any previous medical reports.",
+                notification_type="appointment_confirmation",
+            )
+
+            serializer = self.get_serializer(appointment)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class AppointmentDetailView(generics.RetrieveUpdateDestroyAPIView):

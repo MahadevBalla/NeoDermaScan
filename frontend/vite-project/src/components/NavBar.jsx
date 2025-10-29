@@ -23,7 +23,7 @@ const NavBar = () => {
     { to: '/login', label: 'Login', auth: false },
     { to: '/signup', label: 'Signup', auth: false },
     { to: '/upload', label: 'Upload', always: true },
-    { to: '/find-doctor', label: 'Find Dermats', auth: true },
+    { to: '/find-doctor', label: 'Find Dermatologist', auth: true },
     { to: '/profile', label: 'My Profile', auth: true },
   ];
 
