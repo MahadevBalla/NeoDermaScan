@@ -1,18 +1,24 @@
 import os
 from math import asin, cos, radians, sin, sqrt
-from datetime import datetime
+from django.utils import timezone
 
 import requests
 from django.conf import settings
 from django.core.mail import send_mail
 from supabase import create_client, Client
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+# Twilio
+TWILIO_ACCOUNT_SID = settings.TWILIO_ACCOUNT_SID
+TWILIO_AUTH_TOKEN = settings.TWILIO_AUTH_TOKEN
+TWILIO_PHONE_NUMBER = settings.TWILIO_PHONE_NUMBER
+TWILIO_WHATSAPP_NUMBER = settings.TWILIO_WHATSAPP_NUMBER
 
-# Supabase configuration
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET", "diagnosis-images")
+# Supabase
+SUPABASE_URL = settings.SUPABASE_URL
+SUPABASE_KEY = settings.SUPABASE_SERVICE_ROLE_KEY
+SUPABASE_BUCKET = settings.SUPABASE_BUCKET
+
+GOOGLE_API_KEY = getattr(settings, "GOOGLE_MAPS_API_KEY", None)
 
 # Initialize Supabase client
 supabase: Client = None
@@ -36,7 +42,7 @@ def get_nearby_hospitals(lat, lon, radius=5000):
         resp = requests.get(url, params=params, timeout=10).json()
         return resp.get("results", [])
     except Exception as e:
-        print(f"Google Places API error: {e}")
+        # print(f"Google Places API error: {e}")
         return []
 
 
@@ -58,12 +64,12 @@ def upload_to_supabase(file, user_id):
     Returns: (storage_path, public_url) or (None, None) if failed
     """
     if not supabase:
-        print("Supabase client not initialized")
+        # print("Supabase client not initialized")
         return None, None
 
     try:
         # Generate unique filename
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = timezone.now().strftime("%Y%m%d_%H%M%S")
         original_name = file.name
         file_extension = original_name.split(".")[-1]
         unique_filename = f"{user_id}/{timestamp}_{original_name}"
@@ -86,7 +92,7 @@ def upload_to_supabase(file, user_id):
         return unique_filename, public_url
 
     except Exception as e:
-        print(f"Supabase upload error: {e}")
+        # print(f"Supabase upload error: {e}")
         return None, None
 
 
@@ -104,48 +110,28 @@ def send_email_notification(subject, message, recipient):
         )
         return True
     except Exception as e:
-        print(f"Email sending failed: {e}")
+        # print(f"Email sending failed: {e}")
         return False
 
 
-def send_sms_notification(phone, message):
+def send_twilio_message(phone, message, whatsapp=False):
     """
-    Send SMS notification using Twilio API
+    Send SMS or WhatsApp notification using Twilio API.
+
+    Args:
+        phone (str): Recipient phone number
+        message (str): Message body
+        whatsapp (bool): If True, send via WhatsApp. Otherwise, SMS.
+    Returns:
+        bool: True if sent successfully, False otherwise
     """
-    TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
-    TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-    TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
 
-    if not all([TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER]):
-        print("Twilio credentials not configured")
-        return False
+    # Determine the Twilio "from" number
+    from_number = TWILIO_WHATSAPP_NUMBER if whatsapp else TWILIO_PHONE_NUMBER
 
-    try:
-        from twilio.rest import Client
-
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        message = client.messages.create(
-            body=message, from_=TWILIO_PHONE_NUMBER, to=str(phone)
-        )
-        print(f"SMS sent successfully: {message.sid}")
-        return True
-    except Exception as e:
-        print(f"SMS sending failed: {e}")
-        return False
-
-
-def send_whatsapp_notification(phone, message):
-    """
-    Send WhatsApp notification using Twilio WhatsApp API
-    """
-    TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
-    TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-    TWILIO_WHATSAPP_NUMBER = os.getenv(
-        "TWILIO_WHATSAPP_NUMBER", "whatsapp:+14155238886"
-    )  # Twilio sandbox
-
-    if not all([TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN]):
-        print("Twilio credentials not configured")
+    # Check required credentials
+    if not all([TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, from_number]):
+        # print("Twilio credentials not configured")
         return False
 
     try:
@@ -154,17 +140,17 @@ def send_whatsapp_notification(phone, message):
         client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
         # Format phone number for WhatsApp
-        formatted_phone = str(phone)
-        if not formatted_phone.startswith("whatsapp:"):
-            formatted_phone = f"whatsapp:{formatted_phone}"
+        if whatsapp and not str(phone).startswith("whatsapp:"):
+            phone = f"whatsapp:{phone}"
 
-        message = client.messages.create(
-            body=message, from_=TWILIO_WHATSAPP_NUMBER, to=formatted_phone
-        )
-        print(f"WhatsApp sent successfully: {message.sid}")
+        msg = client.messages.create(body=message, from_=from_number, to=str(phone))
+        channel = "WhatsApp" if whatsapp else "SMS"
+        # print(f"{channel} sent successfully: {msg.sid}")
         return True
+
     except Exception as e:
-        print(f"WhatsApp sending failed: {e}")
+        channel = "WhatsApp" if whatsapp else "SMS"
+        # print(f"{channel} sending failed: {e}")
         return False
 
 
@@ -179,7 +165,7 @@ def send_notification(
 
     # Check if user has given consent
     if not user.notification_consent:
-        print(f"User {user.email} has not given notification consent")
+        # print(f"User {user.email} has not given notification consent")
         return False
 
     # Determine channel
@@ -192,9 +178,9 @@ def send_notification(
         if channel == "email":
             success = send_email_notification(subject, message, user.email)
         elif channel == "sms":
-            success = send_sms_notification(user.phone_no, message)
+            success = send_twilio_message(user.phone_no, message)
         elif channel == "whatsapp":
-            success = send_whatsapp_notification(user.phone_no, message)
+            success = send_twilio_message(user.phone_no, message, whatsapp=True)
         else:
             error_message = f"Unknown channel: {channel}"
     except Exception as e:
@@ -208,7 +194,7 @@ def send_notification(
         subject=subject,
         message=message,
         status="sent" if success else "failed",
-        sent_at=datetime.now() if success else None,
+        sent_at=timezone.now() if success else None,
         error_message=error_message,
     )
 

@@ -1,23 +1,81 @@
 import { useState } from 'react';
-import { TextInput, Group, Text, Paper, ScrollArea, Button } from '@mantine/core';
-import { Send } from 'lucide-react';
+import { TextInput, Group, Text, Paper, ScrollArea, Button, Alert } from '@mantine/core';
+import { Send, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 const AIChatAssistant = ({ isVisible }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [topicWarning, setTopicWarning] = useState(false);
+
+    // Expanded keywords for skin, dermatology, and general medical topics
+    const medicalKeywords = [
+        // Skin cancer specific
+        'skin cancer', 'melanoma', 'carcinoma', 'basal cell', 'squamous cell',
+        // Dermatology
+        'dermatologist', 'dermatology', 'skin specialist',
+        // General skin conditions
+        'skin', 'mole', 'rash', 'acne', 'eczema', 'psoriasis', 'rosacea',
+        'skin lesion', 'skin biopsy', 'skin tag', 'birthmark', 'freckle',
+        // Skin care
+        'sun protection', 'sunscreen', 'skin care', 'moisturizer', 'skin health',
+        // Medical procedures
+        'skin exam', 'dermatoscope', 'biopsy', 'skin surgery',
+        // Symptoms
+        'itchy skin', 'dry skin', 'red skin', 'skin bump', 'skin spot',
+        // Other skin conditions
+        'actinic keratosis', 'skin tumor', 'skin abnormality', 'hives', 'warts',
+        'fungal infection', 'bacterial infection', 'viral infection',
+        // Medical facilities
+        'hospital', 'clinic', 'medical center', 'dermatology clinic',
+        // Medical professionals
+        'doctor', 'physician', 'surgeon', 'oncologist',
+        // General medical terms
+        'diagnosis', 'treatment', 'symptoms', 'medication', 'therapy',
+        'prevention', 'screening', 'test', 'medical advice'
+    ];
+
+    // Allowed conversational phrases
+    const conversationalPhrases = [
+        'hi', 'hello', 'hey', 'how are you', 'good morning', 'good afternoon', 'good evening',
+        'thanks', 'thank you', 'okay', 'bye', 'goodbye', 'see you', 'help', 'what can you do'
+    ];
+
+    // Check if input is conversational or medical/skin related
+    const isValidInput = (text) => {
+        const lowerText = text.toLowerCase().trim();
+
+        // Check if it's a conversational phrase
+        const isConversational = conversationalPhrases.some(phrase =>
+            lowerText.includes(phrase) || lowerText === phrase
+        );
+
+        // Check if it's medical/skin related
+        const isMedicalRelated = medicalKeywords.some(keyword =>
+            lowerText.includes(keyword)
+        );
+
+        return isConversational || isMedicalRelated;
+    };
 
     const sendMessage = async () => {
         if (!input.trim()) return;
+
+        // Check if the question is valid (conversational or medical/skin related)
+        if (!isValidInput(input)) {
+            setTopicWarning(true);
+            return;
+        }
 
         const userMessage = { role: 'user', content: input };
         setMessages(prev => [...prev, userMessage]);
         setInput('');
         setIsLoading(true);
         setError(null);
+        setTopicWarning(false);
 
         try {
             const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -26,7 +84,20 @@ const AIChatAssistant = ({ isVisible }) => {
                 throw new Error('Gemini API key not found. Please set VITE_GEMINI_API_KEY in your .env file');
             }
 
-            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent', {
+            const systemPrompt = `You are a specialized medical assistant focused on dermatology, skin health, and related medical fields.
+            - For greetings and basic conversation, respond politely and briefly.
+            - Provide detailed information about:
+              * Skin conditions (acne, eczema, psoriasis, rashes, etc.)
+              * Skin cancer (melanoma, basal cell carcinoma, squamous cell carcinoma)
+              * Skin care and sun protection
+              * Dermatology procedures and treatments
+              * When to see a dermatologist
+              * General skin health information
+            - You can answer questions about related medical fields, hospitals, and medical professionals as they pertain to skin health.
+            - Always advise consulting a dermatologist or medical professional for specific medical concerns.
+            - Do not provide definitive diagnoses or specific treatment plans for individual cases.`;
+
+            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,11 +107,11 @@ const AIChatAssistant = ({ isVisible }) => {
                     contents: [
                         {
                             role: 'user',
-                            parts: [{ text: input }]
+                            parts: [{ text: `${systemPrompt}\n\nUser: ${input}` }]
                         }
                     ],
                     generationConfig: {
-                        temperature: 0.7,
+                        temperature: 0.3,
                         maxOutputTokens: 1024
                     }
                 })
@@ -81,14 +152,17 @@ const AIChatAssistant = ({ isVisible }) => {
                 >
                     <motion.div className="flex flex-col h-full">
                         <div className="p-4 border-b bg-gray-100">
-                            <Text size="lg" weight={700} className="text-teal-600 pl-2">AI Assistant</Text>
-                            <Text size="xs" className="text-gray-600">Powered by Gemini Flash 1.5</Text>
+                            <Text size="lg" weight={700} className="text-teal-600 pl-2">Skin & Dermatology Assistant</Text>
+                            <Text size="xs" className="text-gray-600">Specialized in skin health, dermatology, and related medical fields</Text>
                         </div>
 
                         <ScrollArea className="flex-1 p-4">
                             {messages.length === 0 ? (
                                 <div className="text-center text-gray-500 py-8">
-                                    Start a conversation with the AI assistant
+                                    <Text mb="md">Ask about skin health, dermatology, or related medical topics</Text>
+                                    <Text size="sm" color="dimmed">
+                                        Example: "What are the warning signs of skin cancer?" or "How can I treat acne?"
+                                    </Text>
                                 </div>
                             ) : (
                                 messages.map((message, index) => (
@@ -102,7 +176,7 @@ const AIChatAssistant = ({ isVisible }) => {
                                         radius="md"
                                     >
                                         <Text size="sm" weight={600} className="mb-1">
-                                            {message.role === 'user' ? 'You' : 'AI Assistant'}
+                                            {message.role === 'user' ? 'You' : 'Skin & Dermatology Assistant'}
                                         </Text>
                                         {message.role === 'assistant' ? (
                                             <div className="markdown-content">
@@ -120,7 +194,7 @@ const AIChatAssistant = ({ isVisible }) => {
                                     shadow="xs"
                                     radius="md"
                                 >
-                                    <Text size="sm" weight={600} className="mb-1">AI Assistant</Text>
+                                    <Text size="sm" weight={600} className="mb-1">Skin & Dermatology Assistant</Text>
                                     <Text className="animate-pulse">Thinking...</Text>
                                 </Paper>
                             )}
@@ -130,15 +204,27 @@ const AIChatAssistant = ({ isVisible }) => {
                                     shadow="xs"
                                     radius="md"
                                 >
-                                    Error: {error}
+                                    <Group>
+                                        <AlertCircle size={18} />
+                                        <Text>Error: {error}</Text>
+                                    </Group>
                                 </Paper>
+                            )}
+                            {topicWarning && (
+                                <Alert icon={<AlertCircle size={16} />} color="orange" className="mb-3">
+                                    <Text size="sm">
+                                        I can only answer questions about skin health, dermatology, and related medical topics.
+                                        Please ask a related question, such as "What are the symptoms of eczema?"
+                                        or "When should I see a dermatologist?"
+                                    </Text>
+                                </Alert>
                             )}
                         </ScrollArea>
 
                         <div className="p-4 border-t bg-gray-100">
                             <Group spacing={8}>
                                 <TextInput
-                                    placeholder="Ask a question..."
+                                    placeholder="Ask about skin health, dermatology, or related medical topics..."
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
@@ -154,6 +240,9 @@ const AIChatAssistant = ({ isVisible }) => {
                                     Send
                                 </Button>
                             </Group>
+                            <Text size="xs" color="dimmed" mt="xs">
+                                This assistant answers questions about skin health, dermatology, and related medical fields.
+                            </Text>
                         </div>
                     </motion.div></motion.div>
             )}
@@ -161,4 +250,4 @@ const AIChatAssistant = ({ isVisible }) => {
     );
 };
 
-export default AIChatAssistant;
+export default AIChatAssistant; 

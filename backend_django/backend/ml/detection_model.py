@@ -50,17 +50,24 @@ def predict_melanoma(model, image_path):
         classes = ["Benign", "Melanoma"]
         prediction = classes[class_idx]
 
+        if prediction == "Melanoma":
+            recommendations = [
+                "Schedule a dermatologist visit within 1 week",
+                "Avoid sun exposure and tanning beds",
+                "Monitor and document any new or changing moles",
+                "Consider biopsy or further testing as advised by doctor",
+            ]
+        else:
+            recommendations = [
+                "Monitor the area for changes",
+                "Take clear photos every 1-2 weeks",
+                "Maintain healthy skin care routines",
+                "Consult a doctor if you notice changes",
+            ]
+
         return {
             "prediction": prediction,
             "confidence": round(confidence * 100, 2),
             "risk": "High" if prediction == "Melanoma" else "Low",
-            "recommendations": [
-                (
-                    "Schedule dermatologist visit ASAP"
-                    if prediction == "Melanoma"
-                    else "Monitor the skin area"
-                ),
-                "Avoid excessive sun exposure",
-                "Take clear photos to track changes",
-            ],
+            "recommendations": recommendations,
         }

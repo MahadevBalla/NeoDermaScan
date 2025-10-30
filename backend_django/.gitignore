@@ -10,11 +10,11 @@ __pycache__/
 venv/
 env/
 .env
-
+.env.production
 media/
 staticfiles/
 **/migrations/__pycache__/
-
+req.txt
 .vscode/
 .idea/
 *.swp
