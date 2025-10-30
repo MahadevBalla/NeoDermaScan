@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { 
-  Text, 
-  Title, 
-  Container, 
-  Group, 
-  Paper, 
-  Button, 
+import {
+  Text,
+  Title,
+  Container,
+  Group,
+  Paper,
+  Button,
   Alert,
   Avatar,
   Tabs,
@@ -14,16 +14,15 @@ import {
   Card,
   Badge,
   Divider,
-  ActionIcon,
   List,
   Accordion,
   Image,
   ThemeIcon,
   Loader,
   Flex,
-  Modal
 } from '@mantine/core';
-import { 
+import CustomModal from '../components/CustomModal';
+import {
   IconChartLine,
   IconFileAnalytics,
   IconCalendarStats,
@@ -33,7 +32,6 @@ import {
   IconPhoneCall,
   IconBug,
   IconAlertTriangle,
-  IconCircleCheck,
   IconClock,
   IconBriefcase,
   IconMapPin,
@@ -42,7 +40,6 @@ import {
   IconInfoCircle,
   IconPhoto,
   IconCalendar as IconCalendarDate,
-  IconX,
   IconChevronRight
 } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
@@ -52,7 +49,6 @@ import { get, patch } from '../utils/api';
 
 const MyProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [debugMode, DebugMode] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [appointmentsLoading, setAppointmentsLoading] = useState(false);
   const [appointmentsError, setAppointmentsError] = useState(null);
@@ -77,16 +73,13 @@ const MyProfile = () => {
   const fetchAppointments = async () => {
     setAppointmentsLoading(true);
     setAppointmentsError(null);
-    
+
     try {
-      console.log("Fetching appointments...");
       const data = await get('/appointments/');
-      console.log("Fetched appointments data:", data);
-      
+
       // Ensure data is an array
       if (Array.isArray(data)) {
         setAppointments(data);
-        console.log("Appointments state set successfully");
       } else {
         console.error("Appointments data is not an array:", data);
         setAppointmentsError("Invalid appointments data format");
@@ -105,17 +98,14 @@ const MyProfile = () => {
   const fetchAnalysisHistory = async () => {
     setAnalysisLoading(true);
     setAnalysisError(null);
-    
+
     try {
-      console.log("Fetching analysis history...");
       // Using the correct endpoint from urls.py: /diagnosis/history/
       const data = await get('/diagnosis/history/');
-      console.log("Fetched analysis history data:", data);
-      
+
       // Ensure data is an array
       if (Array.isArray(data)) {
         setAnalysisHistory(data);
-        console.log("Analysis history state set successfully");
       } else {
         console.error("Analysis history data is not an array:", data);
         setAnalysisError("Invalid analysis history data format");
@@ -141,29 +131,27 @@ const MyProfile = () => {
   // Function to cancel an appointment
   const cancelAppointment = async (appointmentId) => {
     try {
-      console.log("Attempting to cancel appointment with ID:", appointmentId);
+      // Show loading state (optional - add a loading state if you want)
       const response = await patch(`/appointments/${appointmentId}/`, {
         status: 'cancelled'
       });
-      console.log("Cancellation response:", response);
-      
+
       // Update the appointment status locally
-      setAppointments(prevAppointments => 
-        prevAppointments.map(appointment => 
-          appointment.id === appointmentId 
-            ? { ...appointment, status: 'cancelled' } 
+      setAppointments(prevAppointments =>
+        prevAppointments.map(appointment =>
+          appointment.id === appointmentId
+            ? { ...appointment, status: 'cancelled' }
             : appointment
         )
       );
-      
       // Close the modal
-      setCancelModal({ opened: false, appointmentId: null, doctorName: "" });
-      
-      // Show success message
+      closeCancelModal();
+      // Clear any previous errors
       setAppointmentsError(null);
     } catch (err) {
       console.error('Error cancelling appointment:', err);
       setAppointmentsError('Failed to cancel appointment. Please try again.');
+      // Keep modal open on error so user can retry
     }
   };
 
@@ -268,7 +256,7 @@ const MyProfile = () => {
   // Format address function - Updated to handle different address structures
   const formatAddress = (address) => {
     if (!address) return 'Address not available';
-    
+
     // Handle if address is an object
     if (typeof address === 'object') {
       const parts = [
@@ -278,10 +266,10 @@ const MyProfile = () => {
         address.state,
         address.pincode
       ];
-      
+
       return parts.filter(Boolean).join(', ');
     }
-    
+
     // Handle if address is a string
     return address;
   };
@@ -291,10 +279,10 @@ const MyProfile = () => {
     try {
       if (!dateString) return "Date not available";
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
       });
     } catch (e) {
       console.error("Error formatting date:", e);
@@ -305,14 +293,12 @@ const MyProfile = () => {
   // Render appointment card with error handling - Updated to properly display address
   const renderAppointmentCard = (appointment, index) => {
     try {
-      console.log(`Rendering appointment ${index}:`, appointment);
-      
       // Safely access nested properties
       const doctor = appointment.doctor || {};
       const doctorName = doctor.name || "Unknown Doctor";
       const doctorSpecialization = doctor.specialization || "Specialty not specified";
       const hospital = doctor.hospital || "Hospital not specified";
-      
+
       // Get address with multiple fallbacks
       let doctorAddress = null;
       if (doctor.address) {
@@ -323,11 +309,11 @@ const MyProfile = () => {
       } else if (doctor.primary_address) {
         doctorAddress = doctor.primary_address;
       }
-      
+
       const formattedDate = formatDate(appointment.date);
       const timeSlot = appointment.time_slot || "Time not specified";
       const status = appointment.status || "unknown";
-      
+
       return (
         <Card
           key={appointment.id || index}
@@ -342,39 +328,39 @@ const MyProfile = () => {
               Dr. {doctorName}
             </Text>
           </Group>
-          
+
           <Text size="xs" c="dimmed" mb="xs">
             {doctorSpecialization}
           </Text>
-          
+
           <Group mb="xs">
             <IconCalendarDate size={14} className="text-teal-600" />
             <Text size="sm">{formattedDate}</Text>
           </Group>
-          
+
           <Group mb="xs">
             <IconClock size={14} className="text-teal-600" />
             <Text size="sm">{timeSlot}</Text>
           </Group>
-          
+
           <Group mb="xs">
             <IconBriefcase size={14} className="text-teal-600" />
             <Text size="sm">{hospital}</Text>
           </Group>
-          
+
           {/* Address section with better fallbacks */}
           <Group mb="xs">
             <IconMapPin size={14} className="text-teal-600" />
             <Text size="sm">{formatAddress(doctorAddress)}</Text>
           </Group>
-          
+
           {doctorAddress?.landmark && (
             <Group mb="xs">
               <IconAddressBook size={14} className="text-teal-600" />
               <Text size="sm"><span className="font-medium">Landmark:</span> {doctorAddress.landmark}</Text>
             </Group>
           )}
-          
+
           <Group justify="space-between" mt="md">
             {getStatusBadge(status)}
             {status === 'booked' && (
@@ -406,7 +392,7 @@ const MyProfile = () => {
   const renderSimpleAnalysisCard = (analysis, index) => {
     try {
       const status = getStatusFromRisk(analysis.risk);
-      
+
       return (
         <Card
           key={analysis.id || index}
@@ -441,12 +427,12 @@ const MyProfile = () => {
                 </Text>
                 {/* Changed: Replaced Badge with Group containing IconAlertTriangle and text */}
                 <Group gap={4}>
-                  <IconAlertTriangle 
-                    size={14} 
-                    className={analysis.risk === 'High' ? 'text-red-500' : analysis.risk === 'Medium' ? 'text-yellow-500' : 'text-green-500'} 
+                  <IconAlertTriangle
+                    size={14}
+                    className={analysis.risk === 'High' ? 'text-red-500' : analysis.risk === 'Medium' ? 'text-yellow-500' : 'text-green-500'}
                   />
-                  <Text 
-                    size="xs" 
+                  <Text
+                    size="xs"
                     className={analysis.risk === 'High' ? 'text-red-500' : analysis.risk === 'Medium' ? 'text-yellow-500' : 'text-green-500'}
                   >
                     Risk Level: {analysis.risk}
@@ -455,7 +441,7 @@ const MyProfile = () => {
               </Group>
             </div>
           </Group>
-          
+
           <Group justify="flex-end" mt="md">
             <Button
               variant="outline"
@@ -488,7 +474,7 @@ const MyProfile = () => {
       const doctorName = doctor.name || "Unknown Doctor";
       const formattedDate = formatDate(appointment.date);
       const timeSlot = appointment.time_slot || "Time not specified";
-      
+
       return (
         <Card
           key={appointment.id || index}
@@ -537,11 +523,9 @@ const MyProfile = () => {
   // Render analysis card for history tab (detailed)
   const renderAnalysisCard = (analysis, index) => {
     try {
-      console.log(`Rendering analysis ${index}:`, analysis);
-      
       const formattedDate = formatDate(analysis.created_at);
       const status = getStatusFromRisk(analysis.risk);
-      
+
       return (
         <Card
           key={analysis.id || index}
@@ -605,7 +589,7 @@ const MyProfile = () => {
                     </Group>
                   </Grid.Col>
                 </Grid>
-                
+
                 {analysis.recommendations && (
                   <>
                     <Title order={6} mt="md" mb="xs">Recommendations</Title>
@@ -616,7 +600,7 @@ const MyProfile = () => {
                     </List>
                   </>
                 )}
-                
+
                 <Group justify="flex-end" mt="md">
                   <Button
                     variant="outline"
@@ -699,22 +683,22 @@ const MyProfile = () => {
           className="mb-8"
         >
           <Tabs.List className="bg-white p-1 rounded-lg shadow-sm border border-teal-100">
-            <Tabs.Tab 
-              value="overview" 
+            <Tabs.Tab
+              value="overview"
               leftSection={<IconChartLine size={16} />}
               className="data-[active]:bg-teal-50 data-[active]:text-teal-800 rounded-md transition-all"
             >
               Overview
             </Tabs.Tab>
-            <Tabs.Tab 
-              value="history" 
+            <Tabs.Tab
+              value="history"
               leftSection={<IconFileAnalytics size={16} />}
               className="data-[active]:bg-teal-50 data-[active]:text-teal-800 rounded-md transition-all"
             >
               Analysis History
             </Tabs.Tab>
-            <Tabs.Tab 
-              value="appointments" 
+            <Tabs.Tab
+              value="appointments"
               leftSection={<IconCalendarStats size={16} />}
               className="data-[active]:bg-teal-50 data-[active]:text-teal-800 rounded-md transition-all"
             >
@@ -722,19 +706,6 @@ const MyProfile = () => {
             </Tabs.Tab>
           </Tabs.List>
         </Tabs>
-
-        {/* Debug Information */}
-        {debugMode && (
-          <Paper withBorder p="md" radius="md" className="mb-8">
-            <Title order={2}>Debug Information</Title>
-            <Text>User: {JSON.stringify(user)}</Text>
-            <Text>Tokens: {tokens ? 'Available' : 'Not available'}</Text>
-            <Text>Loading: {loading ? 'Yes' : 'No'}</Text>
-            <Text>Appointments: {appointments.length}</Text>
-            <Text>Analysis History: {analysisHistory.length}</Text>
-          </Paper>
-        )}
-
         {/* Overview Tab Content */}
         {activeTab === 'overview' && (
           <>
@@ -966,33 +937,47 @@ const MyProfile = () => {
         )}
 
         {/* Cancel Confirmation Modal */}
-        <Modal
+        <CustomModal
           opened={cancelModal.opened}
           onClose={closeCancelModal}
           title={
-            <Group>
+            <Group gap="xs">
               <IconExclamationCircle color="orange" size={24} />
-              <Text fw={600}>Confirm Cancellation</Text>
+              <Text size="lg" fw={600}>Confirm Cancellation</Text>
             </Group>
           }
-          size="md"
-          centered
         >
-          <Text mb="lg">
-            Are you sure you want to cancel your appointment with <span className="font-semibold">Dr. {cancelModal.doctorName}</span>?
-          </Text>
-          <Group justify="flex-end" mt="xl">
-            <Button variant="outline" onClick={closeCancelModal}>
+          <Paper p="md" radius="md" withBorder className="border-orange-100 bg-orange-50/30 mb-4">
+            <Text className="text-gray-700">
+              Are you sure you want to cancel your appointment with{' '}
+              <Text component="span" fw={600} className="text-orange-700">
+                Dr. {cancelModal.doctorName}
+              </Text>?
+            </Text>
+            <Text size="sm" c="dimmed" mt="xs">
+              This action cannot be undone.
+            </Text>
+          </Paper>
+
+          <Group justify="flex-end" gap="sm">
+            <Button
+              variant="outline"
+              onClick={closeCancelModal}
+              className="border-gray-300"
+            >
               Keep Appointment
             </Button>
-            <Button 
-              color="red" 
-              onClick={() => cancelAppointment(cancelModal.appointmentId)}
+            <Button
+              color="red"
+              onClick={async () => {
+                await cancelAppointment(cancelModal.appointmentId);
+              }}
+              className="!bg-red-500 hover:!bg-red-600"
             >
               Confirm Cancellation
             </Button>
           </Group>
-        </Modal>
+        </CustomModal>
       </Container>
     </div>
   );

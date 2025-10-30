@@ -1,35 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Modal,
   Title,
   Text,
-  TextInput,
-  Select,
-  Textarea,
   Button,
   Group,
   Paper,
   Divider,
   Badge,
   Grid,
-  NumberInput,
   Box,
   LoadingOverlay,
   Alert,
-  ActionIcon,
   Menu,
   ScrollArea
 } from '@mantine/core';
 import {
-  IconCalendar,
-  IconClock,
-  IconUser,
-  IconPhone,
-  IconCreditCard,
-  IconNotes,
   IconCheck,
   IconAlertCircle,
-  IconX,
   IconChevronDown,
   IconLock
 } from '@tabler/icons-react';
@@ -54,27 +42,27 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
 
   // Parse doctor's working hours
   const workingHours = doctor.working_hours || {};
-  
+
   // Parse working hours in format "10:00 AM - 5:00 PM" to { start: "10:00", end: "17:00" }
   const parseWorkingHours = (hoursString) => {
     if (hoursString === "Closed") return null;
-    
+
     const parts = hoursString.split(' - ');
     if (parts.length !== 2) return null;
-    
+
     const parseTime = (timeStr) => {
       const [time, period] = timeStr.trim().split(' ');
       let [hours, minutes] = time.split(':').map(Number);
-      
+
       if (period === 'PM' && hours !== 12) {
         hours += 12;
       } else if (period === 'AM' && hours === 12) {
         hours = 0;
       }
-      
+
       return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     };
-    
+
     return {
       start: parseTime(parts[0]),
       end: parseTime(parts[1])
@@ -87,7 +75,7 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
     const availableDays = Object.keys(workingHours)
       .filter(day => workingHours[day] !== "Closed")
       .map(day => day.charAt(0).toUpperCase() + day.slice(1, 3)); // e.g., "monday" -> "Mon"
-    
+
     // Sort days according to the week order
     return availableDays.sort((a, b) => {
       const aIndex = dayOrder.indexOf(a.toLowerCase());
@@ -101,12 +89,12 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
     const dates = [];
     const today = DateTime.now();
     const orderedDays = getOrderedAvailableDays();
-    
+
     for (let i = 0; i < 14; i++) {
       const date = today.plus({ days: i });
       // Get abbreviated day name (e.g., "Mon")
       const dayName = date.toFormat('EEE');
-      
+
       // Check if this day is in the list of available days (case-insensitive)
       if (orderedDays.some(day => day.toLowerCase() === dayName.toLowerCase())) {
         dates.push({
@@ -116,44 +104,44 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
         });
       }
     }
-    
+
     return dates;
   };
 
   // Generate time slots based on doctor's working hours
   const generateTimeSlots = (selectedDate) => {
     if (!selectedDate) return [];
-    
+
     const dateObj = DateTime.fromISO(selectedDate);
     // Get full day name (e.g., "Monday") and convert to lowercase to match working_hours keys
     const dayName = dateObj.toFormat('EEEE').toLowerCase();
     const hoursString = workingHours[dayName];
-    
+
     if (!hoursString || hoursString === "Closed") return [];
-    
+
     const parsedHours = parseWorkingHours(hoursString);
     if (!parsedHours) return [];
-    
+
     const { start, end } = parsedHours;
     const slots = [];
-    
+
     // Parse start and end times
     const [startHour, startMinute] = start.split(':').map(Number);
     const [endHour, endMinute] = end.split(':').map(Number);
-    
+
     // Generate 30-minute slots
     let currentHour = startHour;
     let currentMinute = startMinute;
-    
+
     while (currentHour < endHour || (currentHour === endHour && currentMinute < endMinute)) {
       const timeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
       const displayTime = DateTime.fromObject({ hour: currentHour, minute: currentMinute }).toFormat('hh:mm a');
-      
+
       slots.push({
         value: timeString,
         label: displayTime
       });
-      
+
       // Add 30 minutes
       currentMinute += 30;
       if (currentMinute >= 60) {
@@ -161,20 +149,18 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
         currentHour += 1;
       }
     }
-    
+
     return slots;
   };
 
   // Fetch booked appointments for the selected doctor and date
   const fetchBookedAppointments = async (doctorId, date) => {
     if (!doctorId || !date) return;
-    
+
     try {
-      console.log(`Fetching appointments for doctor ${doctorId} on date ${date}`);
       // Use the appointments endpoint with query parameters for doctor_id and date
       const response = await get(`/appointments/?doctor_id=${doctorId}&date=${date}`);
-      console.log('Appointments response:', response);
-      
+
       // Process the response to get booked time slots
       const bookedSlots = response
         .filter(appt => appt.status === 'booked')
@@ -184,15 +170,13 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
             const timeParts = appt.time_slot.split(':');
             if (timeParts.length >= 2) {
               const timeSlot = `${timeParts[0]}:${timeParts[1]}`;
-              console.log(`Booked time slot: ${timeSlot}`);
               return timeSlot;
             }
           }
           return null;
         })
         .filter(Boolean); // Remove any null values
-      
-      console.log('Final booked slots:', bookedSlots);
+
       setBookedTimeSlots(bookedSlots);
     } catch (err) {
       console.error('Error fetching booked appointments:', err);
@@ -205,7 +189,7 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
     if (opened && doctor) {
       const dates = generateAvailableDates();
       setAvailableDates(dates);
-      
+
       // Reset form data
       setAppointmentData({
         date: '',
@@ -225,10 +209,10 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
     if (appointmentData.date) {
       const slots = generateTimeSlots(appointmentData.date);
       setAvailableTimeSlots(slots);
-      
+
       // Fetch booked appointments for this date
       fetchBookedAppointments(doctor.id, appointmentData.date);
-      
+
       // Reset time if previously selected
       setAppointmentData(prev => ({ ...prev, time: '' }));
     } else {
@@ -240,26 +224,26 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate form
     if (!appointmentData.date || !appointmentData.time) {
       setError('Please select both date and time for your appointment');
       return;
     }
-    
+
     // Check if the selected time slot is already booked
     if (bookedTimeSlots.includes(appointmentData.time)) {
       setError('This time slot is already booked. Please select a different time.');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       // Format time to HH:MM:SS for backend compatibility
       const formattedTime = `${appointmentData.time}:00`;
-      
+
       const response = await post('/appointments/', {
         doctor_id: doctor.id,
         date: appointmentData.date,
@@ -272,14 +256,14 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
         color: 'teal',
         icon: <IconCheck size={16} />
       });
-      
+
       // Refresh appointments list
       onAppointmentBooked();
       onClose();
     } catch (err) {
       // Extract detailed error message from backend response
       let errorMessage = 'Failed to book appointment';
-      
+
       if (err.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
@@ -302,7 +286,7 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
         // Something happened in setting up the request that triggered an Error
         errorMessage = err.message;
       }
-      
+
       setError(errorMessage);
       notifications.show({
         title: 'Error',
@@ -344,23 +328,23 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
         }}
       >
         <Menu.Target>
-          <Button 
-            variant="outline" 
-            fullWidth 
+          <Button
+            variant="outline"
+            fullWidth
             rightSection={<IconChevronDown size={14} />}
             style={{ textAlign: 'left' }}
           >
-            {appointmentData.date 
+            {appointmentData.date
               ? availableDates.find(d => d.value === appointmentData.date)?.label || 'Select a date'
               : 'Select a date'}
           </Button>
         </Menu.Target>
-        
+
         <Menu.Dropdown>
           <ScrollArea h={200}>
             {availableDates.length > 0 ? (
               availableDates.map((date) => (
-                <Menu.Item 
+                <Menu.Item
                   key={date.value}
                   onClick={() => handleInputChange('date', date.value)}
                 >
@@ -404,26 +388,26 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
         }}
       >
         <Menu.Target>
-          <Button 
-            variant="outline" 
-            fullWidth 
+          <Button
+            variant="outline"
+            fullWidth
             rightSection={<IconChevronDown size={14} />}
             style={{ textAlign: 'left' }}
             disabled={!appointmentData.date}
           >
-            {appointmentData.time 
+            {appointmentData.time
               ? availableTimeSlots.find(t => t.value === appointmentData.time)?.label || 'Select a time'
               : 'Select a time'}
           </Button>
         </Menu.Target>
-        
+
         <Menu.Dropdown>
           <ScrollArea h={200}>
             {availableTimeSlots.length > 0 ? (
               availableTimeSlots.map((time) => {
                 const isBooked = bookedTimeSlots.includes(time.value);
                 return (
-                  <Menu.Item 
+                  <Menu.Item
                     key={time.value}
                     onClick={() => !isBooked && handleInputChange('time', time.value)}
                     disabled={isBooked}
@@ -458,9 +442,9 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
   );
 
   return (
-    <Modal 
-      opened={opened} 
-      onClose={onClose} 
+    <Modal
+      opened={opened}
+      onClose={onClose}
       title={
         <Text size="lg" fw={600}>Book Appointment with {doctor.name}</Text>
       }
@@ -486,7 +470,7 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
       }}
     >
       <LoadingOverlay visible={loading} />
-      
+
       <Box pos="relative" style={{ zIndex: 10000 }}>
         <Paper withBorder p="md" radius="md" mb="md">
           <Group>
@@ -515,23 +499,23 @@ const BookAppointmentForm = ({ opened, onClose, doctor, onAppointmentBooked }) =
                 Select Date & Time
               </Title>
             </Grid.Col>
-            
+
             <Grid.Col span={{ base: 12, md: 6 }}>
               <DateSelector />
             </Grid.Col>
-            
+
             <Grid.Col span={{ base: 12, md: 6 }}>
               <TimeSelector />
             </Grid.Col>
           </Grid>
-          
+
           <Divider my="md" />
-          
+
           <Group justify="space-between" mt="md">
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
+            <Button
               type="submit"
               className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
             >

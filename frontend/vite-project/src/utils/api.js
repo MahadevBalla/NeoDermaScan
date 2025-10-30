@@ -17,13 +17,13 @@ const getTokens = () => {
   if (tokens) {
     return JSON.parse(tokens);
   }
-  
+
   // Then check sessionStorage
   tokens = sessionStorage.getItem('authTokens');
   if (tokens) {
     return JSON.parse(tokens);
   }
-  
+
   return null;
 };
 
@@ -57,25 +57,25 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
+
     // If error is 401 and we haven't tried to refresh the token yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       try {
         const tokens = getTokens();
         if (tokens && tokens.refresh) {
           const response = await axios.post(`${API_BASE_URL}/auth/refresh/`, {
             refresh: tokens.refresh,
           });
-          
+
           const newAccess = response.data.access;
           const updatedTokens = { ...tokens, access: newAccess };
-          
+
           // Determine which storage to use based on where the original tokens were stored
           const rememberMe = localStorage.getItem('authTokens') !== null;
           storeTokens(updatedTokens, rememberMe);
-          
+
           // Update the authorization header for the original request
           originalRequest.headers.Authorization = `Bearer ${newAccess}`;
           return api(originalRequest);
@@ -88,7 +88,7 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -105,39 +105,39 @@ export const authAPI = {
       email,
       password,
     });
-    
+
     const tokens = response.data;
     storeTokens(tokens, rememberMe);
-    
+
     return response.data;
   },
-  
+
   register: async (userData) => {
     const response = await axios.post(`${API_BASE_URL}/auth/register/`, userData);
     return response.data;
   },
-  
+
   logout: () => {
     localStorage.removeItem('authTokens');
     sessionStorage.removeItem('authTokens');
   },
-  
+
   getCurrentUser: () => {
     // For now, we don't store user data separately
     // In a real app, you might want to store user info in the tokens or make a separate API call
     return null;
   },
-  
+
   isAuthenticated: () => {
     const tokens = getTokens();
     return !!(tokens && tokens.access);
   },
-  
+
   getAccessToken: () => {
     const tokens = getTokens();
     return tokens ? tokens.access : null;
   },
-  
+
   getRefreshToken: () => {
     const tokens = getTokens();
     return tokens ? tokens.refresh : null;

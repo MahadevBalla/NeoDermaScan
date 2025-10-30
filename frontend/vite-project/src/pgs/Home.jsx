@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import {
   Text,
@@ -11,8 +10,6 @@ import {
   ThemeIcon,
   Card,
   Image,
-  rem,
-  Overlay,
   Center,
 } from "@mantine/core";
 import {

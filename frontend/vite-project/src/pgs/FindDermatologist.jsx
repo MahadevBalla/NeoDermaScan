@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Text,
   Title,
@@ -15,32 +15,26 @@ import {
   Box,
   LoadingOverlay,
   Alert,
-  ActionIcon,
   Accordion,
-  List,
-  ThemeIcon,
   Modal
 } from "@mantine/core";
 import {
   IconSearch,
   IconMapPin,
   IconPhone,
-  IconStar,
   IconCalendar,
   IconUser,
   IconBriefcase,
   IconClock,
   IconUserCircle,
   IconAlertCircle,
-  IconX,
   IconSchool,
   IconCertificate,
   IconBuildingHospital,
   IconAddressBook,
-  IconCheck,
   IconExclamationCircle
 } from "@tabler/icons-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BookAppointmentForm from "../components/BookAppointmentForm";
 import { get, post, patch, authAPI } from "../utils/api";
 
@@ -51,24 +45,24 @@ const FindDermatologist = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [authError, setAuthError] = useState(null);
-  
+
   // State for filters
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [bookModalOpened, setBookModalOpened] = useState(false);
-  
+
   // User location state
   const [userLocation, setUserLocation] = useState(null);
-  
+
   // Cancel confirmation modal state
   const [cancelModal, setCancelModal] = useState({
     opened: false,
     appointmentId: null,
     doctorName: ""
   });
-  
+
   const navigate = useNavigate();
 
   // Get unique specialties and locations for filter options
@@ -85,17 +79,17 @@ const FindDermatologist = () => {
   // Filter dermatologists based on search and filter criteria
   const filteredDermatologists = useMemo(() => {
     return dermatologists.filter(dermatologist => {
-      const matchesSearch = searchTerm === "" || 
+      const matchesSearch = searchTerm === "" ||
         dermatologist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         dermatologist.specialization.toLowerCase().includes(searchTerm.toLowerCase()) ||
         dermatologist.hospital.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesSpecialty = selectedSpecialty === "All" || 
+
+      const matchesSpecialty = selectedSpecialty === "All" ||
         dermatologist.specialization === selectedSpecialty;
-      
-      const matchesLocation = selectedLocation === "All" || 
+
+      const matchesLocation = selectedLocation === "All" ||
         dermatologist.address?.city === selectedLocation;
-      
+
       return matchesSearch && matchesSpecialty && matchesLocation;
     });
   }, [dermatologists, searchTerm, selectedSpecialty, selectedLocation]);
@@ -125,10 +119,10 @@ const FindDermatologist = () => {
   // Function to fetch dermatologists from API
   const fetchDermatologists = async () => {
     if (!userLocation) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       // First, try to fetch all doctors without any radius limitation
       const allDoctors = await post('/doctors/nearby/', {
@@ -136,17 +130,13 @@ const FindDermatologist = () => {
         lon: userLocation.lon,
         radius: 5000, // Use a very large radius (5000km) to ensure we get all doctors across India
       });
-      
-      console.log(`Fetched ${allDoctors.length} doctors in total`);
-      console.log("Cities represented:", [...new Set(allDoctors.map(d => d.address?.city).filter(Boolean))]);
-      
+
       // Store all doctors for filtering
       setDermatologists(allDoctors);
-      
+
       // If we still don't have 50 doctors, try a different approach
       if (allDoctors.length < 50) {
-        console.log("Only fetched", allDoctors.length, "doctors, trying alternative approach...");
-        
+
         // Try fetching without location parameters
         try {
           const fallbackDoctors = await post('/doctors/nearby/', {
@@ -154,9 +144,7 @@ const FindDermatologist = () => {
             lon: 78.9629,
             radius: 10000, // Even larger radius
           });
-          
-          console.log(`Fallback approach fetched ${fallbackDoctors.length} doctors`);
-          
+
           if (fallbackDoctors.length > allDoctors.length) {
             setDermatologists(fallbackDoctors);
           }
@@ -185,24 +173,22 @@ const FindDermatologist = () => {
   // Function to cancel an appointment
   const cancelAppointment = async (appointmentId) => {
     try {
-      console.log("Attempting to cancel appointment with ID:", appointmentId);
       const response = await patch(`/appointments/${appointmentId}/`, {
         status: 'cancelled'
       });
-      console.log("Cancellation response:", response);
-      
+
       // Update the appointment status locally
-      setAppointments(prevAppointments => 
-        prevAppointments.map(appointment => 
-          appointment.id === appointmentId 
-            ? { ...appointment, status: 'cancelled' } 
+      setAppointments(prevAppointments =>
+        prevAppointments.map(appointment =>
+          appointment.id === appointmentId
+            ? { ...appointment, status: 'cancelled' }
             : appointment
         )
       );
-      
+
       // Close the modal
       setCancelModal({ opened: false, appointmentId: null, doctorName: "" });
-      
+
       // Show success message
       setError(null);
     } catch (err) {
@@ -243,7 +229,7 @@ const FindDermatologist = () => {
   // Format address function
   const formatAddress = (address) => {
     if (!address) return 'Address not available';
-    
+
     const parts = [
       address.address_line_1,
       address.address_line_2,
@@ -251,24 +237,24 @@ const FindDermatologist = () => {
       address.state,
       address.pincode
     ];
-    
+
     return parts.filter(Boolean).join(', ');
   };
 
   // Format working hours function
   const formatWorkingHours = (workingHours) => {
     if (!workingHours) return 'Working hours not available';
-    
+
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     const formattedHours = [];
-    
+
     for (const day of days) {
       const hours = workingHours[day];
       if (hours && hours !== 'Closed') {
         formattedHours.push(`${day.charAt(0).toUpperCase() + day.slice(1, 3)}: ${hours}`);
       }
     }
-    
+
     return formattedHours.join(', ');
   };
 
@@ -279,7 +265,7 @@ const FindDermatologist = () => {
       setAuthError('Please log in to access this page');
       return;
     }
-    
+
     getUserLocation();
   }, []);
 
@@ -329,8 +315,8 @@ const FindDermatologist = () => {
           <Text className="text-center mb-6">
             {authError || 'Please log in to access the dermatologist search page.'}
           </Text>
-          <Button 
-            fullWidth 
+          <Button
+            fullWidth
             className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
             onClick={() => navigate('/login')}
           >
@@ -442,7 +428,7 @@ const FindDermatologist = () => {
                               {dermatologist.specialization}
                             </Badge>
                           </Group>
-                          
+
                           <Group mb="xs">
                             <Rating value={4.5} fractions={2} readOnly />
                             <Text fz="xs" c="dimmed">
@@ -450,7 +436,7 @@ const FindDermatologist = () => {
                             </Text>
                           </Group>
                         </div>
-                        
+
                         <div className="text-right">
                           <Group gap="md">
                             {dermatologist.distance_km !== undefined && (
@@ -469,9 +455,9 @@ const FindDermatologist = () => {
                           </Group>
                         </div>
                       </Group>
-                      
+
                       <Divider my="md" />
-                      
+
                       <Accordion>
                         <Accordion.Item value="details">
                           <Accordion.Control>
@@ -487,17 +473,17 @@ const FindDermatologist = () => {
                                   <IconBriefcase size={14} className="text-teal-600 flex-shrink-0" />
                                   <Text fz="sm"><span className="font-medium">Hospital:</span> {dermatologist.hospital}</Text>
                                 </Group>
-                                
+
                                 <Group mb="xs" wrap="nowrap">
                                   <IconUser size={14} className="text-teal-600 flex-shrink-0" />
                                   <Text fz="sm"><span className="font-medium">Experience:</span> {dermatologist.years_of_experience} years</Text>
                                 </Group>
-                                
+
                                 <Group mb="xs" wrap="nowrap">
                                   <IconPhone size={14} className="text-teal-600 flex-shrink-0" />
                                   <Text fz="sm"><span className="font-medium">Phone:</span> {dermatologist.phone || "Not available"}</Text>
                                 </Group>
-                                
+
                                 <Box mb="xs">
                                   <Group wrap="nowrap" mb={2}>
                                     <IconSchool size={14} className="text-teal-600 flex-shrink-0" />
@@ -506,13 +492,13 @@ const FindDermatologist = () => {
                                   <Text fz="sm" pl={28}>{dermatologist.qualifications}</Text>
                                 </Box>
                               </Grid.Col>
-                              
+
                               <Grid.Col span={6}>
                                 <Group mb="xs" wrap="nowrap">
                                   <IconCertificate size={14} className="text-teal-600 flex-shrink-0" />
                                   <Text fz="sm"><span className="font-medium">License:</span> {dermatologist.license_number}</Text>
                                 </Group>
-                                
+
                                 <Box mb="xs">
                                   <Group wrap="nowrap" mb={2}>
                                     <IconClock size={14} className="text-teal-600 flex-shrink-0" />
@@ -524,7 +510,7 @@ const FindDermatologist = () => {
                             </Grid>
                           </Accordion.Panel>
                         </Accordion.Item>
-                        
+
                         <Accordion.Item value="address">
                           <Accordion.Control>
                             <Group>
@@ -537,7 +523,7 @@ const FindDermatologist = () => {
                               <IconBuildingHospital size={14} className="text-teal-600 flex-shrink-0" />
                               <Text fz="sm">{formatAddress(dermatologist.address)}</Text>
                             </Group>
-                            
+
                             {dermatologist.address?.landmark && (
                               <Group mb="xs" wrap="nowrap">
                                 <IconAddressBook size={14} className="text-teal-600 flex-shrink-0" />
@@ -591,26 +577,26 @@ const FindDermatologist = () => {
                           Dr. {appointment.doctor.name}
                         </Text>
                       </Group>
-                      
+
                       <Text size="xs" c="dimmed" mb="xs">
                         {appointment.doctor.specialization}
                       </Text>
-                      
+
                       <Group mb="xs">
                         <IconCalendar size={14} className="text-teal-600" />
                         <Text size="sm">{new Date(appointment.date).toLocaleDateString()}</Text>
                       </Group>
-                      
+
                       <Group mb="xs">
                         <IconClock size={14} className="text-teal-600" />
                         <Text size="sm">{appointment.time_slot}</Text>
                       </Group>
-                      
+
                       <Group mb="xs">
                         <IconBriefcase size={14} className="text-teal-600" />
                         <Text size="sm">{appointment.doctor.hospital}</Text>
                       </Group>
-                      
+
                       <Group justify="space-between" mt="md">
                         {getStatusBadge(appointment.status)}
                         {appointment.status === 'booked' && (
@@ -649,8 +635,8 @@ const FindDermatologist = () => {
 
       {/* Book Appointment Modal */}
       {selectedDoctor && (
-        <BookAppointmentForm 
-          opened={bookModalOpened} 
+        <BookAppointmentForm
+          opened={bookModalOpened}
           onClose={() => setBookModalOpened(false)}
           doctor={selectedDoctor}
           onAppointmentBooked={fetchAppointments}
@@ -678,8 +664,8 @@ const FindDermatologist = () => {
           <Button variant="outline" onClick={closeCancelModal}>
             Keep Appointment
           </Button>
-          <Button 
-            color="red" 
+          <Button
+            color="red"
             onClick={() => cancelAppointment(cancelModal.appointmentId)}
             className="!bg-gradient-to-r !from-red-500 !to-orange-500 !text-white !font-semibold !shadow-lg !shadow-red-400/50 !transform hover:scale-103 !transition-all !duration-300 hover:!bg-gradient-to-r hover:!from-orange-500 hover:!to-red-500 active:!scale-95 active:!shadow-orange-600/50 focus:!outline-none focus:!ring-2 focus:!ring-red-500 focus:!ring-offset-2"
           >

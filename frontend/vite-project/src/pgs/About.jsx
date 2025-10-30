@@ -7,12 +7,9 @@ import {
   Paper,
   SimpleGrid,
   ThemeIcon,
-  Box,
-  Avatar,
   Accordion,
   Timeline,
   Image,
-  Button,
 } from '@mantine/core';
 import {
   IconMicroscope,
@@ -21,9 +18,7 @@ import {
   IconShieldLock,
   IconCalendarStats,
   IconCertificate,
-  IconUserCircle
 } from '@tabler/icons-react';
-import { Link } from 'react-router-dom';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { useEffect } from 'react';
 

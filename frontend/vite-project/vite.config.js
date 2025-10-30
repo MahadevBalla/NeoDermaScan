@@ -27,7 +27,4 @@ export default defineConfig({
         "X-Requested-With, content-type, Authorization",
     },
   },
-  define: {
-    "process.env": process.env,
-  },
 });

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TextInput, Group, Text, Paper, ScrollArea, Button, Alert } from '@mantine/core';
 import { Send, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { AnimatePresence} from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 const AIChatAssistant = ({ isVisible }) => {
     const [messages, setMessages] = useState([]);
@@ -18,7 +18,7 @@ const AIChatAssistant = ({ isVisible }) => {
         // Dermatology
         'dermatologist', 'dermatology', 'skin specialist',
         // General skin conditions
-        'skin', 'mole', 'rash', 'acne', 'eczema', 'psoriasis', 'rosacea', 
+        'skin', 'mole', 'rash', 'acne', 'eczema', 'psoriasis', 'rosacea',
         'skin lesion', 'skin biopsy', 'skin tag', 'birthmark', 'freckle',
         // Skin care
         'sun protection', 'sunscreen', 'skin care', 'moisturizer', 'skin health',
@@ -47,17 +47,17 @@ const AIChatAssistant = ({ isVisible }) => {
     // Check if input is conversational or medical/skin related
     const isValidInput = (text) => {
         const lowerText = text.toLowerCase().trim();
-        
+
         // Check if it's a conversational phrase
-        const isConversational = conversationalPhrases.some(phrase => 
+        const isConversational = conversationalPhrases.some(phrase =>
             lowerText.includes(phrase) || lowerText === phrase
         );
-        
+
         // Check if it's medical/skin related
-        const isMedicalRelated = medicalKeywords.some(keyword => 
+        const isMedicalRelated = medicalKeywords.some(keyword =>
             lowerText.includes(keyword)
         );
-        
+
         return isConversational || isMedicalRelated;
     };
 
@@ -213,8 +213,8 @@ const AIChatAssistant = ({ isVisible }) => {
                             {topicWarning && (
                                 <Alert icon={<AlertCircle size={16} />} color="orange" className="mb-3">
                                     <Text size="sm">
-                                        I can only answer questions about skin health, dermatology, and related medical topics. 
-                                        Please ask a related question, such as "What are the symptoms of eczema?" 
+                                        I can only answer questions about skin health, dermatology, and related medical topics.
+                                        Please ask a related question, such as "What are the symptoms of eczema?"
                                         or "When should I see a dermatologist?"
                                     </Text>
                                 </Alert>
