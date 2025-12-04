@@ -20,9 +20,9 @@ NeoDermaScan is a web-based platform for early detection of melanoma skin cancer
 
 ## Tech Stack
 
-**Frontend**: React 18, Vite, Redux Toolkit, Tailwind CSS, Axios
+**Frontend**: Vite React, Redux Toolkit, Tailwind CSS, Axios
 
-**Backend**: Django 5.2.5, Django REST Framework, PostgreSQL, Supabase, JWT Authentication, Twilio
+**Backend**: Django, Django REST Framework, PostgreSQL, Supabase, JWT Authentication, Twilio
 
 **Machine Learning**: PyTorch, EfficientNet-B0, Distributed Data Parallel (DDP), Albumentations
 
@@ -83,10 +83,6 @@ NeoDermaScan/
 ---
 
 ## Setup and Installation
-
-### Prerequisites
-
-- Python 3.10+, Node.js 18+, PostgreSQL or Supabase account
 
 ### Clone the repository
 
