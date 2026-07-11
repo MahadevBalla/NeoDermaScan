@@ -4,8 +4,6 @@
 
 NeoDermaScan is a web-based platform for early detection of melanoma skin cancer using deep learning. The system uses an EfficientNet-based CNN trained on the SIIM-ISIC dataset to analyze skin lesion images and provide risk assessments. It includes patient management, appointment booking, dermatologist discovery, and multi-channel notifications.
 
----
-
 ## Demo
 [View Project Demo](https://youtu.be/RswyBJ7I79Y)
 
