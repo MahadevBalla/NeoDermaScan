@@ -6,6 +6,11 @@ NeoDermaScan is a web-based platform for early detection of melanoma skin cancer
 
 ---
 
+## Demo
+[View Project Demo](https://youtu.be/RswyBJ7I79Y)
+
+---
+
 ## Features
 
 - **AI-Powered Diagnosis** - Upload skin lesion images for melanoma risk assessment with confidence scores and recommendations
